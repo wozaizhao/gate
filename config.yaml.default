@@ -1,0 +1,35 @@
+# 监听本地的端口
+listen: :9090
+# 开发模式还是生产模式
+mode: development
+
+# 使用redis来存放access_token
+redis:
+  host: redisthostip:6379
+
+# mysql配置
+mysql:
+  host: mysqlhostip
+  port: mysqlport
+  username: mysqlusername
+  password: mysqluserpassword
+  database: mysqldatabase
+
+# jwt 密钥
+jwtsecret: jwtsecretword
+
+# 微信公众号相关配置
+officialAccountConfig:
+  appID: officialAccount appID
+  appSecret: officialAccount appSecret
+  token: officialAccount token
+
+# 小程序相关配置
+miniProgramConfig:
+  appID: weapp appID
+  appSecret: weapp appSecret
+
+# 阿里云相关配置
+aliyunConfig:
+  AccessKeyID: aliyun accessKeyID
+  AccessKeySecret: aliyun accessKeySecret
