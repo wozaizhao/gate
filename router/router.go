@@ -31,9 +31,10 @@ func SetupRouter() *gin.Engine {
 	// 注册用户可以访问 /user
 	user := r.Group("/user", controllers.UserAuth())
 	{
-		user.GET("/current", controllers.CurrentUser)    // 当前帐户
-		user.POST("/linkwechat", controllers.LinkWechat) // 关联openID
-		user.PUT("/:id", controllers.UpdateUser)         // 设置用户昵称、头像、性别、用户名、密码
+		user.GET("/currentUser", controllers.CurrentUser) // 当前帐户
+		user.POST("/linkwechat", controllers.LinkWechat)  // 关联openID
+		user.PUT("/:id", controllers.UpdateUser)          // 设置用户昵称、头像、性别、用户名、密码
+		user.POST("/upload", controllers.Upload)          // 上传
 	}
 
 	// 管理员才能访问 /admin

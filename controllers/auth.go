@@ -1,10 +1,10 @@
 package controllers
 
 import (
-	"net/http"
-
+	"errors"
 	"github.com/gin-gonic/gin"
-
+	"net/http"
+	"strings"
 	// "wozaizhao.com/eden/config"
 	"wozaizhao.com/gate/common"
 	"wozaizhao.com/gate/middlewares"
@@ -12,7 +12,7 @@ import (
 )
 
 type AuthHeader struct {
-	Token string `header:"token"`
+	Token string `header:"Authorization"`
 }
 
 func TokenValidator(c *gin.Context) (*middlewares.Claims, error) {
@@ -21,7 +21,13 @@ func TokenValidator(c *gin.Context) (*middlewares.Claims, error) {
 	if err := c.ShouldBindHeader(&h); err != nil {
 		return nil, err
 	}
-	claims, errorParseToken := middlewares.ParseToken(h.Token)
+	var token string
+	if len(strings.Split(h.Token, " ")) == 2 {
+		token = strings.Split(h.Token, " ")[1]
+	} else {
+		return nil, errors.New("token is not found")
+	}
+	claims, errorParseToken := middlewares.ParseToken(token)
 	if errorParseToken != nil {
 		return nil, errorParseToken
 	}
@@ -35,11 +41,16 @@ func UserAuth() gin.HandlerFunc {
 			c.AbortWithStatus(http.StatusUnauthorized)
 			return
 		}
-		if common.STATUS_NORMAL == models.GetUserStatus(claims.UserID) {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"code": 1002, "errMsg": "帐户已禁用！"})
+		userStatus := models.GetUserStatus(claims.UserID)
+		if common.STATUS_NOT_ACTIVATED == userStatus {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "error", "message": common.ERROR_USER_NOT_ACTIVATED})
+			return
+
+		} else if common.STATUS_FORBIDDEN == userStatus {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "error", "message": common.ERROR_USER_SUSPENDED})
 			return
 		}
-		c.Set("user-id", claims.UserID)
+		c.Set("userID", claims.UserID)
 		c.Next()
 	}
 }
@@ -52,7 +63,7 @@ func AdminAuth() gin.HandlerFunc {
 			return
 		}
 		if common.ADMIN_ROLE == models.GetUserRole(claims.UserID) {
-			c.Set("user-id", claims.UserID)
+			c.Set("userID", claims.UserID)
 			c.Next()
 		} else {
 			c.AbortWithStatus(http.StatusUnauthorized)

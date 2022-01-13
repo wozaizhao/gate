@@ -15,6 +15,10 @@ func RenderError(c *gin.Context, err error) {
 	c.JSON(http.StatusInternalServerError, fmt.Sprintf("%+v", err.Error()))
 }
 
+func RenderBadRequest(c *gin.Context, err error) {
+	c.JSON(http.StatusBadRequest, fmt.Sprintf("%+v", err.Error()))
+}
+
 func RenderFail(c *gin.Context, message string) {
 	c.JSON(http.StatusOK, gin.H{"status": "fail", "message": message})
 }

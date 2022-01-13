@@ -37,6 +37,7 @@ type Config struct {
 	*MiniProgramConfig     `yaml:"miniProgramConfig"`
 	*AliyunConfig          `yaml:"aliyunConfig"`
 	*GeetestConfig         `yaml:"geetestConfig"`
+	*QiniuConfig           `yaml:"qiniuConfig"`
 }
 
 // OfficialAccountConfig 公众号相关配置
@@ -67,6 +68,13 @@ type AliyunConfig struct {
 type GeetestConfig struct {
 	GeetestID  string `yaml:"geetestID"`
 	GeetestKey string `yaml:"geetestKey"`
+}
+
+// 七牛云相关配置
+type QiniuConfig struct {
+	AccessKey string `yaml:"accessKey"`
+	SecretKey string `yaml:"secretKey"`
+	Bucket    string `yaml:"bucket"`
 }
 
 // GetConfig 获取配置

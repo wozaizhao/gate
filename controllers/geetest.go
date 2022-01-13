@@ -97,12 +97,12 @@ func hmac_encode(key string, data string) string {
 
 func send(phone string) error {
 	cfg := config.GetConfig()
-	if cfg.Mode != "production" {
-		return nil
-	}
 	code, err := models.CreateCaptcha(phone)
 	if err != nil {
 		return err
+	}
+	if cfg.Mode != "production" {
+		return nil
 	}
 	err = middlewares.SendLoginSms(phone, code)
 	if err != nil {

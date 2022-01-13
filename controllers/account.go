@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"wozaizhao.com/gate/config"
 	"wozaizhao.com/gate/middlewares"
 	"wozaizhao.com/gate/models"
 )
@@ -21,13 +22,14 @@ type loginReq struct {
 }
 
 type loginRes struct {
-	Info  UserInfo `json:"info"`
+	User  UserInfo `json:"user"`
 	Token string   `json:"token"`
 }
 
 type UserInfo struct {
 	ID        uint   `json:"id"`
 	NickName  string `json:"nickname"`   // 昵称
+	Bio       string `json:"bio"`        // 简介
 	AvatarURL string `json:"avatar_url"` // 头像
 	Gender    int    `json:"gender"`     // 性别
 	Phone     string `json:"phone"`      // 手机号
@@ -38,17 +40,21 @@ type UserInfo struct {
 }
 
 func LoginByPhone(c *gin.Context) {
+	cfg := config.GetConfig()
+
 	var s loginReq
 	if err := c.ShouldBindJSON(&s); err != nil {
-		RenderError(c, err)
+		RenderBadRequest(c, err)
 		return
 	}
 
-	captchaAvailable := models.CaptchaAvailable(s.Phone, s.Code)
+	if cfg.Mode == "production" {
+		captchaAvailable := models.CaptchaAvailable(s.Phone, s.Code)
 
-	if !captchaAvailable {
-		RenderFail(c, "验证码错误")
-		return
+		if !captchaAvailable {
+			RenderFail(c, "验证码错误")
+			return
+		}
 	}
 
 	user, err := models.GetUserByPhone(s.Phone, s.OpenID)
@@ -63,7 +69,7 @@ func LoginByPhone(c *gin.Context) {
 	}
 	var res loginRes
 	res.Token = token
-	res.Info = UserInfo{ID: user.ID, NickName: user.NickName, AvatarURL: user.AvatarURL, Gender: user.Gender, Phone: user.Phone, Username: user.Username, Status: user.Status, Role: user.Role, Credit: user.Credit}
+	res.User = UserInfo{ID: user.ID, NickName: user.NickName, Bio: user.Bio, AvatarURL: user.AvatarURL, Gender: user.Gender, Phone: user.Phone, Username: user.Username, Status: user.Status, Role: user.Role, Credit: user.Credit}
 
 	RenderSuccess(c, res, "登录成功")
 }
@@ -81,7 +87,18 @@ func Register(c *gin.Context) {
 
 }
 
-func CurrentUser(c *gin.Context) {}
+func CurrentUser(c *gin.Context) {
+	userID := c.MustGet("userID").(uint)
+	user, err := models.GetUserByID(userID)
+	if err != nil {
+		RenderError(c, err)
+		return
+	}
+	var res loginRes
+	res.User = UserInfo{ID: user.ID, NickName: user.NickName, Bio: user.Bio, AvatarURL: user.AvatarURL, Gender: user.Gender, Phone: user.Phone, Username: user.Username, Status: user.Status, Role: user.Role, Credit: user.Credit}
+
+	RenderSuccess(c, res, "")
+}
 
 func LinkWechat(c *gin.Context) {}
 

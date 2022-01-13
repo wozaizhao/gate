@@ -11,7 +11,7 @@ var jwtSecret = config.GetConfig().JwtSecret
 
 // Claims
 type Claims struct {
-	UserID uint   `json:"user_id"`
+	UserID uint   `json:"userID"`
 	Phone  string `json:"phone"`
 	jwt.StandardClaims
 }
