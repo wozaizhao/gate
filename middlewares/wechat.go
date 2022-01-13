@@ -7,7 +7,7 @@ import (
 	miniConfig "github.com/silenceper/wechat/v2/miniprogram/config"
 	"github.com/silenceper/wechat/v2/officialaccount"
 	offConfig "github.com/silenceper/wechat/v2/officialaccount/config"
-	// log "github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 	"wozaizhao.com/gate/config"
 )
 
@@ -35,7 +35,7 @@ func InitWechat() {
 		AppID:     cfg.MiniProgramConfig.AppID,
 		AppSecret: cfg.MiniProgramConfig.AppSecret,
 	}
-	// log.Debugf("miniCfg=%+v", miniCfg)
+	log.Debugf("miniCfg=%+v", miniCfg)
 	miniProgram = wc.GetMiniProgram(miniCfg)
 
 	offCfg := &offConfig.Config{
@@ -44,7 +44,7 @@ func InitWechat() {
 		Token:     cfg.OfficialAccountConfig.Token,
 		//EncodingAESKey: "xxxx",
 	}
-	// log.Debugf("offCfg=%+v", offCfg)
+	log.Debugf("offCfg=%+v", offCfg)
 	officialAccount = wc.GetOfficialAccount(offCfg)
 }
 

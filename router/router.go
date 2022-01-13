@@ -18,7 +18,7 @@ func SetupRouter() *gin.Engine {
 	// 任何人都可访问
 	r.POST("/wechat/code2Session", wechat.Code2Session)
 	// r.POST("/wechat/decryptUserInfo", wechat.DecryptUserInfo)
-	r.GET("/wechat/GetConfig", wechat.GetConfig)
+	r.GET("/wechat/getConfig", wechat.GetConfig)
 
 	r.GET("/captcha", controllers.GeetestVerify)        // 极验验证
 	r.POST("/login", controllers.Login)                 // 使用用户名密码登录
