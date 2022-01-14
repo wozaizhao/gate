@@ -33,7 +33,7 @@ func SetupRouter() *gin.Engine {
 	{
 		user.GET("/currentUser", controllers.CurrentUser) // 当前帐户
 		user.POST("/linkwechat", controllers.LinkWechat)  // 关联openID
-		user.PUT("/:id", controllers.UpdateUser)          // 设置用户昵称、头像、性别、用户名、密码
+		user.PUT("/edit", controllers.UpdateUser)         // 设置用户昵称、头像、性别、用户名、密码
 		user.POST("/upload", controllers.Upload)          // 上传
 	}
 

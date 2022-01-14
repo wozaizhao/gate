@@ -14,9 +14,9 @@ type User struct {
 	DeletedAt gorm.DeletedAt `gorm:"index"`
 	OpenID    string         `json:"open_id" gorm:"type:varchar(40);DEFAULT ''"`         // openID 小程序登录获取
 	UnionID   string         `json:"union_id" gorm:"type:varchar(40);DEFAULT ''"`        // unionID 满足条件下小程序处获取
-	NickName  string         `json:"nickname" gorm:"type:varchar(50);DEFAULT ''"`        // 昵称
+	Nickname  string         `json:"nickname" gorm:"type:varchar(50);DEFAULT ''"`        // 昵称
 	Bio       string         `json:"bio" gorm:"type:varchar(50);DEFAULT ''"`             // 简介
-	AvatarURL string         `json:"avatar_url" gorm:"type:varchar(255);DEFAULT ''"`     // 头像
+	AvatarURL string         `json:"avatarUrl" gorm:"type:varchar(255);DEFAULT ''"`      // 头像
 	Gender    int            `json:"gender" gorm:"type:tinyint(1);DEFAULT '0'"`          // 性别
 	Phone     string         `json:"phone" gorm:"type:varchar(20);unique;DEFAULT ''"`    // 手机号
 	Username  string         `json:"username" gorm:"type:varchar(30);DEFAULT ''"`        // 用户名
@@ -46,7 +46,7 @@ func GetUserByPhone(phone, openID string) (User, error) {
 
 // 创建帐户
 func createUser(phone, openID string) (user User, err error) {
-	user = User{Phone: phone, OpenID: openID, NickName: "用户" + phone[5:], Status: common.STATUS_NORMAL}
+	user = User{Phone: phone, OpenID: openID, Nickname: "用户" + phone[5:], Status: common.STATUS_NORMAL}
 	result := DB.Create(&user)
 	err = result.Error
 	return
@@ -63,6 +63,14 @@ func GetUserByID(userID uint) (user User, err error) {
 	r := DB.Where("id = ? ", userID).Find(&user)
 	err = r.Error
 	return
+}
+
+// 更新用户信息
+func UpdateUser(userID uint, Gender int, Phone, Nickname, AvatarURL, Username, Password string) (res bool, err error) {
+	var user User
+	user.ID = userID
+	r := DB.Model(&user).Updates(User{Gender: Gender, Phone: Phone, Nickname: Nickname, AvatarURL: AvatarURL, Username: Username, Password: Password})
+	return r.RowsAffected > 0, r.Error
 }
 
 // 更换手机号

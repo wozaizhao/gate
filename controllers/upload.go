@@ -32,6 +32,7 @@ func Upload(c *gin.Context) {
 	if err != nil {
 		common.LogError("upload error", err)
 		RenderError(c, err)
+		return
 	}
 	RenderSuccess(c, ret, "")
 	// etag, _ := helpers.GetEtag(buf)

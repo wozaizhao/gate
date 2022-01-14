@@ -1,9 +1,8 @@
 package controllers
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
+	"net/http"
 	"wozaizhao.com/gate/config"
 	"wozaizhao.com/gate/middlewares"
 	"wozaizhao.com/gate/models"
@@ -28,15 +27,15 @@ type loginRes struct {
 
 type UserInfo struct {
 	ID        uint   `json:"id"`
-	NickName  string `json:"nickname"`   // 昵称
-	Bio       string `json:"bio"`        // 简介
-	AvatarURL string `json:"avatar_url"` // 头像
-	Gender    int    `json:"gender"`     // 性别
-	Phone     string `json:"phone"`      // 手机号
-	Username  string `json:"username"`   // 用户名
-	Status    uint   `json:"status"`     // 状态 1 初始值 正常 2 已失效
-	Role      uint   `json:"role"`       // 角色 1 初始值 普通用户 2 管理员 3 vip
-	Credit    int    `json:"credit"`     // 用户积分
+	NickName  string `json:"nickname"`  // 昵称
+	Bio       string `json:"bio"`       // 简介
+	AvatarURL string `json:"avatarUrl"` // 头像
+	Gender    int    `json:"gender"`    // 性别
+	Phone     string `json:"phone"`     // 手机号
+	Username  string `json:"username"`  // 用户名
+	Status    uint   `json:"status"`    // 状态 1 初始值 正常 2 已失效
+	Role      uint   `json:"role"`      // 角色 1 初始值 普通用户 2 管理员 3 vip
+	Credit    int    `json:"credit"`    // 用户积分
 }
 
 func LoginByPhone(c *gin.Context) {
@@ -69,7 +68,7 @@ func LoginByPhone(c *gin.Context) {
 	}
 	var res loginRes
 	res.Token = token
-	res.User = UserInfo{ID: user.ID, NickName: user.NickName, Bio: user.Bio, AvatarURL: user.AvatarURL, Gender: user.Gender, Phone: user.Phone, Username: user.Username, Status: user.Status, Role: user.Role, Credit: user.Credit}
+	res.User = UserInfo{ID: user.ID, NickName: user.Nickname, Bio: user.Bio, AvatarURL: user.AvatarURL, Gender: user.Gender, Phone: user.Phone, Username: user.Username, Status: user.Status, Role: user.Role, Credit: user.Credit}
 
 	RenderSuccess(c, res, "登录成功")
 }
@@ -95,14 +94,37 @@ func CurrentUser(c *gin.Context) {
 		return
 	}
 	var res loginRes
-	res.User = UserInfo{ID: user.ID, NickName: user.NickName, Bio: user.Bio, AvatarURL: user.AvatarURL, Gender: user.Gender, Phone: user.Phone, Username: user.Username, Status: user.Status, Role: user.Role, Credit: user.Credit}
+	res.User = UserInfo{ID: user.ID, NickName: user.Nickname, Bio: user.Bio, AvatarURL: user.AvatarURL, Gender: user.Gender, Phone: user.Phone, Username: user.Username, Status: user.Status, Role: user.Role, Credit: user.Credit}
 
 	RenderSuccess(c, res, "")
 }
 
 func LinkWechat(c *gin.Context) {}
 
-func UpdateUser(c *gin.Context) {}
+type updateUserReq struct {
+	Phone     string `json:"phone"`
+	Nickname  string `json:"nickname"`
+	AvatarURL string `json:"avatarUrl"`
+	Gender    int    `json:"gender"`
+	Username  string `json:"username"`
+	Password  string `json:"password"`
+}
+
+func UpdateUser(c *gin.Context) {
+	userID := c.MustGet("userID").(uint)
+	var s updateUserReq
+	if err := c.ShouldBindJSON(&s); err != nil {
+		RenderBadRequest(c, err)
+		return
+	}
+	res, err := models.UpdateUser(userID, s.Gender, s.Phone, s.Nickname, s.AvatarURL, s.Username, s.Password)
+	if err != nil {
+		RenderError(c, err)
+		return
+	}
+	RenderSuccess(c, res, "")
+
+}
 
 func AdminGetUsers(c *gin.Context) {}
 
