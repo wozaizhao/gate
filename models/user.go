@@ -66,10 +66,10 @@ func GetUserByID(userID uint) (user User, err error) {
 }
 
 // 更新用户信息
-func UpdateUser(userID uint, Gender int, Phone, Nickname, AvatarURL, Username, Password string) (res bool, err error) {
+func UpdateUser(userID uint, Gender int, Phone, Nickname, AvatarURL, Username, Password, Bio string) (res bool, err error) {
 	var user User
 	user.ID = userID
-	r := DB.Model(&user).Updates(User{Gender: Gender, Phone: Phone, Nickname: Nickname, AvatarURL: AvatarURL, Username: Username, Password: Password})
+	r := DB.Model(&user).Updates(User{Gender: Gender, Phone: Phone, Nickname: Nickname, AvatarURL: AvatarURL, Username: Username, Password: Password, Bio: Bio})
 	return r.RowsAffected > 0, r.Error
 }
 
@@ -85,21 +85,6 @@ func LinkUserByOpenID(phone, openID string) {
 
 // 使用微信信息设置用户昵称和头像
 func SetUserInfoByWechat(openID, nickname, avatar string) {
-
-}
-
-// 设置用户昵称
-func SetUserNickname(userID uint, nickname string) {
-
-}
-
-// 设置用户头像
-func SetUserAvatar(userID uint, avatar string) {
-
-}
-
-// 设置用户性别
-func SetUserGender(userID uint, gender int) {
 
 }
 

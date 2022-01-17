@@ -108,6 +108,7 @@ type updateUserReq struct {
 	Gender    int    `json:"gender"`
 	Username  string `json:"username"`
 	Password  string `json:"password"`
+	Bio       string `json:"bio"`
 }
 
 func UpdateUser(c *gin.Context) {
@@ -117,12 +118,12 @@ func UpdateUser(c *gin.Context) {
 		RenderBadRequest(c, err)
 		return
 	}
-	res, err := models.UpdateUser(userID, s.Gender, s.Phone, s.Nickname, s.AvatarURL, s.Username, s.Password)
+	res, err := models.UpdateUser(userID, s.Gender, s.Phone, s.Nickname, s.AvatarURL, s.Username, s.Password, s.Bio)
 	if err != nil {
 		RenderError(c, err)
 		return
 	}
-	RenderSuccess(c, res, "")
+	RenderSuccess(c, res, "修改成功")
 
 }
 
