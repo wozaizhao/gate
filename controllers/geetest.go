@@ -33,13 +33,29 @@ var URL = API_SERVER + "/validate" + "?captcha_id=" + CAPTCHA_ID
 
 // GeetestVerify
 func GeetestVerify(c *gin.Context) {
-
+	cfg := config.GetConfig()
+	var message string
+	if cfg.Mode != "production" {
+		message = "开发模式下可输入任意验证码"
+	} else {
+		message = "验证码已发送"
+	}
 	// 前端传回的数据
 	lot_number := c.Query("lot_number")
 	captcha_output := c.Query("captcha_output")
 	pass_token := c.Query("pass_token")
 	gen_time := c.Query("gen_time")
 	phone := c.Query("phone")
+	from := c.Query("from")
+	if from == "wechat" {
+		err := send(phone)
+		if err != nil {
+			RenderError(c, err)
+			return
+		}
+		RenderSuccess(c, true, message)
+		return
+	}
 	// 生成签名
 	// 生成签名使用标准的hmac算法，使用用户当前完成验证的流水号lot_number作为原始消息message，使用客户验证私钥作为key
 	// 采用sha256散列算法将message和key进行单向散列生成最终的 “sign_token” 签名
@@ -63,8 +79,9 @@ func GeetestVerify(c *gin.Context) {
 		err = send(phone)
 		if err != nil {
 			RenderError(c, err)
+			return
 		}
-		RenderSuccess(c, true, "验证码已发送")
+		RenderSuccess(c, true, message)
 		return
 	}
 
@@ -78,8 +95,9 @@ func GeetestVerify(c *gin.Context) {
 			err = send(phone)
 			if err != nil {
 				RenderError(c, err)
+				return
 			}
-			RenderSuccess(c, true, "验证码已发送")
+			RenderSuccess(c, true, message)
 		} else {
 			reason := res_map["reason"]
 			common.LogError("GeetestVerify fail: ", reason)

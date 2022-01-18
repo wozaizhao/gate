@@ -75,8 +75,6 @@ func LoginByPhone(c *gin.Context) {
 
 func LoginByOpenID(c *gin.Context) {}
 
-func CheckPhoneExist(c *gin.Context) {}
-
 // type captchaRes struct {
 // 	Phone string `json:"phone"`
 // 	From  string `json:"from"`
