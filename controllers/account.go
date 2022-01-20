@@ -68,12 +68,44 @@ func LoginByPhone(c *gin.Context) {
 	}
 	var res loginRes
 	res.Token = token
-	res.User = UserInfo{ID: user.ID, NickName: user.Nickname, Bio: user.Bio, AvatarURL: user.AvatarURL, Gender: user.Gender, Phone: user.Phone, Username: user.Username, Status: user.Status, Role: user.Role, Credit: user.Credit}
+	res.User = basicUserInfo(user)
 
 	RenderSuccess(c, res, "登录成功")
+	if s.OpenID != "" && user.OpenID == "" {
+		models.LinkUserByOpenID(user.ID, s.OpenID)
+	}
 }
 
-func LoginByOpenID(c *gin.Context) {}
+type shortcutLoginReq struct {
+	OpenID string `json:"openID" binding:"required"`
+}
+
+func LoginByOpenID(c *gin.Context) {
+	var s shortcutLoginReq
+	if err := c.ShouldBindJSON(&s); err != nil {
+		RenderBadRequest(c, err)
+		return
+	}
+	user, err := models.GetUserByOpenID(s.OpenID)
+	if err != nil {
+		RenderError(c, err)
+		return
+	}
+	var token, errorGenerateToken = middlewares.GenerateToken(user.ID, user.Phone)
+	if errorGenerateToken != nil {
+		RenderError(c, errorGenerateToken)
+		return
+	}
+	var res loginRes
+	res.Token = token
+	res.User = basicUserInfo(user)
+
+	RenderSuccess(c, res, "快捷登录成功")
+}
+
+func basicUserInfo(user models.User) (userInfo UserInfo) {
+	return UserInfo{ID: user.ID, NickName: user.Nickname, Bio: user.Bio, AvatarURL: user.AvatarURL, Gender: user.Gender, Phone: user.Phone, Username: user.Username, Status: user.Status, Role: user.Role, Credit: user.Credit}
+}
 
 // type captchaRes struct {
 // 	Phone string `json:"phone"`

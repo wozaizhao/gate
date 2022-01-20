@@ -30,7 +30,7 @@ func Upload(c *gin.Context) {
 
 	ret, err := middlewares.Upload(file)
 	if err != nil {
-		common.LogError("upload error", err)
+		common.LogError("upload", err)
 		RenderError(c, err)
 		return
 	}

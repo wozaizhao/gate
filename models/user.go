@@ -65,6 +65,13 @@ func GetUserByID(userID uint) (user User, err error) {
 	return
 }
 
+// 获取用户信息
+func GetUserByOpenID(openID string) (user User, err error) {
+	r := DB.Where("open_id = ?", openID).Find(&user)
+	err = r.Error
+	return
+}
+
 // 更新用户信息
 func UpdateUser(userID uint, Gender int, Phone, Nickname, AvatarURL, Username, Password, Bio string) (res bool, err error) {
 	var user User
@@ -79,8 +86,11 @@ func UpdatePhone(oldphone, phone string) {
 }
 
 // 关联用户openID
-func LinkUserByOpenID(phone, openID string) {
-
+func LinkUserByOpenID(userID uint, openID string) {
+	r := DB.Model(&User{}).Where("id = ?", userID).Update("open_id", openID)
+	if r.Error != nil {
+		common.LogError("LinkUserByOpenID", r.Error)
+	}
 }
 
 // 使用微信信息设置用户昵称和头像

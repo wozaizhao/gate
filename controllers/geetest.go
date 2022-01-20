@@ -100,7 +100,7 @@ func GeetestVerify(c *gin.Context) {
 			RenderSuccess(c, true, message)
 		} else {
 			reason := res_map["reason"]
-			common.LogError("GeetestVerify fail: ", reason)
+			common.LogError("GeetestVerify", reason)
 			RenderFail(c, fmt.Sprintf("%v", reason))
 		}
 	}
