@@ -72,7 +72,7 @@ func LoginByPhone(c *gin.Context) {
 
 	RenderSuccess(c, res, "登录成功")
 	if s.OpenID != "" {
-		models.CreateUserLoginWithWechat(s.OpenID, user.ID)
+		models.UpsertUserLoginWithWechat(s.OpenID, user.ID)
 	}
 }
 
@@ -86,8 +86,12 @@ func LoginByOpenID(c *gin.Context) {
 		RenderBadRequest(c, err)
 		return
 	}
-	record, err := models.GetLoginRecordByOpenID(s.OpenID)
+	record, exist, err := models.GetLoginRecordByOpenID(s.OpenID)
 	if err != nil {
+		RenderError(c, err)
+		return
+	}
+	if !exist {
 		RenderFail(c, "没有使用微信登录的记录")
 		return
 	}
