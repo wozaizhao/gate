@@ -17,7 +17,7 @@ var DB *gorm.DB
 
 // Models 数据库实体
 var models = []interface{}{
-	&User{}, &Captcha{},
+	&User{}, &Captcha{}, &UserLoginWithWechat{},
 }
 
 var newLogger = logger.New(

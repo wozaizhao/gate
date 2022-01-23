@@ -56,7 +56,7 @@ func LoginByPhone(c *gin.Context) {
 		}
 	}
 
-	user, err := models.GetUserByPhone(s.Phone, s.OpenID)
+	user, err := models.GetUserByPhone(s.Phone)
 	if err != nil {
 		RenderError(c, err)
 		return
@@ -71,8 +71,8 @@ func LoginByPhone(c *gin.Context) {
 	res.User = basicUserInfo(user)
 
 	RenderSuccess(c, res, "登录成功")
-	if s.OpenID != "" && user.OpenID == "" {
-		models.LinkUserByOpenID(user.ID, s.OpenID)
+	if s.OpenID != "" {
+		models.CreateUserLoginWithWechat(s.OpenID, user.ID)
 	}
 }
 
@@ -86,7 +86,12 @@ func LoginByOpenID(c *gin.Context) {
 		RenderBadRequest(c, err)
 		return
 	}
-	user, err := models.GetUserByOpenID(s.OpenID)
+	record, err := models.GetLoginRecordByOpenID(s.OpenID)
+	if err != nil {
+		RenderFail(c, "没有使用微信登录的记录")
+		return
+	}
+	user, err := models.GetUserByID(record.UserID)
 	if err != nil {
 		RenderError(c, err)
 		return

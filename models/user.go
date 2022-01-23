@@ -12,26 +12,26 @@ type User struct {
 	CreatedAt time.Time      `json:"created_at"`
 	UpdatedAt time.Time      `json:"updated_at"`
 	DeletedAt gorm.DeletedAt `gorm:"index"`
-	OpenID    string         `json:"open_id" gorm:"type:varchar(40);DEFAULT ''"`         // openID 小程序登录获取
-	UnionID   string         `json:"union_id" gorm:"type:varchar(40);DEFAULT ''"`        // unionID 满足条件下小程序处获取
-	Nickname  string         `json:"nickname" gorm:"type:varchar(50);DEFAULT ''"`        // 昵称
-	Bio       string         `json:"bio" gorm:"type:varchar(50);DEFAULT ''"`             // 简介
-	AvatarURL string         `json:"avatarUrl" gorm:"type:varchar(255);DEFAULT ''"`      // 头像
-	Gender    int            `json:"gender" gorm:"type:tinyint(1);DEFAULT '0'"`          // 性别
-	Phone     string         `json:"phone" gorm:"type:varchar(20);unique;DEFAULT ''"`    // 手机号
-	Username  string         `json:"username" gorm:"type:varchar(30);DEFAULT ''"`        // 用户名
-	Password  string         `json:"password" gorm:"type:varchar(30);DEFAULT ''"`        // 密码
-	Status    uint           `json:"status" gorm:"type:tinyint(1);NOT NULL;DEFAULT '0'"` // 状态 1 初始值 正常 2 已失效
-	Role      uint           `json:"role" gorm:"type:tinyint(1);DEFAULT '0'"`            // 角色 1 初始值 普通用户 2 管理员 3 vip
-	Credit    int            `json:"credit" gorm:"type:int(11);DEFAULT '0'"`             // 用户积分
+	// OpenID    string         `json:"open_id" gorm:"type:varchar(40);DEFAULT ''"`         // openID 小程序登录获取
+	// UnionID   string         `json:"union_id" gorm:"type:varchar(40);DEFAULT ''"`        // unionID 满足条件下小程序处获取
+	Nickname  string `json:"nickname" gorm:"type:varchar(50);DEFAULT ''"`        // 昵称
+	Bio       string `json:"bio" gorm:"type:varchar(50);DEFAULT ''"`             // 简介
+	AvatarURL string `json:"avatarUrl" gorm:"type:varchar(255);DEFAULT ''"`      // 头像
+	Gender    int    `json:"gender" gorm:"type:tinyint(1);DEFAULT '0'"`          // 性别
+	Phone     string `json:"phone" gorm:"type:varchar(20);unique;DEFAULT ''"`    // 手机号
+	Username  string `json:"username" gorm:"type:varchar(30);DEFAULT ''"`        // 用户名
+	Password  string `json:"password" gorm:"type:varchar(30);DEFAULT ''"`        // 密码
+	Status    uint   `json:"status" gorm:"type:tinyint(1);NOT NULL;DEFAULT '0'"` // 状态 1 初始值 正常 2 已失效
+	Role      uint   `json:"role" gorm:"type:tinyint(1);DEFAULT '0'"`            // 角色 1 初始值 普通用户 2 管理员 3 vip
+	Credit    int    `json:"credit" gorm:"type:int(11);DEFAULT '0'"`             // 用户积分
 }
 
-func GetUserByPhone(phone, openID string) (User, error) {
+func GetUserByPhone(phone string) (User, error) {
 	user, exist := phoneExist(phone)
 	if exist {
 		return user, nil
 	} else {
-		user, err := createUser(phone, openID)
+		user, err := createUser(phone)
 		return user, err
 	}
 }
@@ -45,8 +45,8 @@ func GetUserByPhone(phone, openID string) (User, error) {
 // result.RowsAffected // returns inserted records count
 
 // 创建帐户
-func createUser(phone, openID string) (user User, err error) {
-	user = User{Phone: phone, OpenID: openID, Nickname: "用户" + phone[5:], Status: common.STATUS_NORMAL}
+func createUser(phone string) (user User, err error) {
+	user = User{Phone: phone, Nickname: "用户" + phone[5:], Status: common.STATUS_NORMAL}
 	result := DB.Create(&user)
 	err = result.Error
 	return
@@ -66,11 +66,11 @@ func GetUserByID(userID uint) (user User, err error) {
 }
 
 // 获取用户信息
-func GetUserByOpenID(openID string) (user User, err error) {
-	r := DB.Where("open_id = ?", openID).Find(&user)
-	err = r.Error
-	return
-}
+// func GetUserByOpenID(openID string) (user User, err error) {
+// 	r := DB.Where("open_id = ?", openID).Find(&user)
+// 	err = r.Error
+// 	return
+// }
 
 // 更新用户信息
 func UpdateUser(userID uint, Gender int, Phone, Nickname, AvatarURL, Username, Password, Bio string) (res bool, err error) {
@@ -86,12 +86,12 @@ func UpdatePhone(oldphone, phone string) {
 }
 
 // 关联用户openID
-func LinkUserByOpenID(userID uint, openID string) {
-	r := DB.Model(&User{}).Where("id = ?", userID).Update("open_id", openID)
-	if r.Error != nil {
-		common.LogError("LinkUserByOpenID", r.Error)
-	}
-}
+// func LinkUserByOpenID(userID uint, openID string) {
+// 	r := DB.Model(&User{}).Where("id = ?", userID).Update("open_id", openID)
+// 	if r.Error != nil {
+// 		common.LogError("LinkUserByOpenID", r.Error)
+// 	}
+// }
 
 // 使用微信信息设置用户昵称和头像
 func SetUserInfoByWechat(openID, nickname, avatar string) {
