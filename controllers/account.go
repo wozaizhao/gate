@@ -92,7 +92,7 @@ func LoginByOpenID(c *gin.Context) {
 		return
 	}
 	if !exist {
-		RenderFail(c, "没有使用微信登录的记录")
+		RenderFail(c, "")
 		return
 	}
 	user, err := models.GetUserByID(record.UserID)
@@ -109,7 +109,7 @@ func LoginByOpenID(c *gin.Context) {
 	res.Token = token
 	res.User = basicUserInfo(user)
 
-	RenderSuccess(c, res, "快捷登录成功")
+	RenderSuccess(c, res, "")
 }
 
 func basicUserInfo(user models.User) (userInfo UserInfo) {
