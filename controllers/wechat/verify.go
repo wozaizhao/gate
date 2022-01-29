@@ -53,7 +53,7 @@ func TencentCaptcha(c *gin.Context) {
 	// 发起post请求
 	// 设置5s超时
 	cli := http.Client{Timeout: time.Second * 5}
-	resp, err := cli.Post(fullURL, "multipart/form-data", strings.NewReader(form_data.Encode()))
+	resp, err := cli.Post(fullURL, "application/json; charset=UTF-8", strings.NewReader(form_data.Encode()))
 	if err != nil || resp.StatusCode != 200 {
 		// 当请求发生异常时，应放行通过，以免阻塞业务。
 		common.LogError("TencentCaptcha PostForm", err)
