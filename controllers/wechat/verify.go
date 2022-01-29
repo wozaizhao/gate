@@ -1,13 +1,12 @@
 package wechat
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"net/http"
-	"net/url"
-	"strings"
 	"time"
 	"wozaizhao.com/gate/common"
 	"wozaizhao.com/gate/config"
@@ -44,19 +43,28 @@ func TencentCaptcha(c *gin.Context) {
 	randstr := c.Query("randstr")
 	phone := c.Query("phone")
 
-	form_data := make(url.Values)
-	form_data["openid"] = []string{openID}
-	form_data["ticket"] = []string{ticket}
-	form_data["randstr"] = []string{randstr}
-	form_data["userip"] = []string{userip}
+	type Request struct {
+		OpenID  string `json:"openid"`
+		Ticket  string `json:"ticket"`
+		Randstr string `json:"randstr"`
+		UserIP  string `json:"userip"`
+	}
 
+	req := Request{
+		OpenID:  openID,
+		Ticket:  ticket,
+		Randstr: randstr,
+		UserIP:  userip,
+	}
+
+	data, _ := json.Marshal(req)
 	// 发起post请求
 	// 设置5s超时
 	cli := http.Client{Timeout: time.Second * 5}
-	resp, err := cli.Post(fullURL, "application/json; charset=UTF-8", strings.NewReader(form_data.Encode()))
+	resp, err := cli.Post(fullURL, "application/json", bytes.NewBuffer(data))
 	if err != nil || resp.StatusCode != 200 {
 		// 当请求发生异常时，应放行通过，以免阻塞业务。
-		common.LogError("TencentCaptcha PostForm", err)
+		common.LogError("TencentCaptcha Post: ", err)
 		err = controllers.Send(phone)
 		if err != nil {
 			controllers.RenderError(c, err)
