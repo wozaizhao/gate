@@ -13,9 +13,9 @@ func main() {
 	r := router.SetupRouter()
 	cfg := config.GetConfig()
 
-	if cfg.Mode == "production" {
-		common.LogToFile()
-	}
+	// if cfg.Mode == "production" {
+	common.LogToFile()
+	// }
 
 	middlewares.InitWechat()
 	middlewares.InitSmsClient()
