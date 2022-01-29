@@ -83,6 +83,7 @@ func TencentCaptcha(c *gin.Context) {
 	if err := json.Unmarshal(res_json, &res_map); err == nil {
 		common.LogDebug("res_map", res_map)
 		response := res_map["response"]
+		common.LogDebug("response", response == 1)
 		if response == 1 {
 			err = controllers.Send(phone)
 			if err != nil {
