@@ -58,6 +58,7 @@ func TencentCaptcha(c *gin.Context) {
 	}
 
 	data, _ := json.Marshal(req)
+	common.LogDebug("request data", data)
 	// 发起post请求
 	// 设置5s超时
 	cli := http.Client{Timeout: time.Second * 5}
