@@ -85,7 +85,7 @@ func TencentCaptcha(c *gin.Context) {
 		common.LogDebug("res_map", res_map)
 		response := res_map["response"]
 		common.LogDebug("response", reflect.TypeOf(response))
-		if response == 1 {
+		if response.(float64) == 1 {
 			err = controllers.Send(phone)
 			if err != nil {
 				controllers.RenderError(c, err)
