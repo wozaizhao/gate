@@ -80,6 +80,7 @@ func TencentCaptcha(c *gin.Context) {
 	var res_map map[string]interface{}
 	// 响应json数据如：{"errcode": 0, "errmsg": "ok", "response":1, "evil_level":70, "err_msg":""}
 	if err := json.Unmarshal(res_json, &res_map); err == nil {
+		common.LogDebug("res_map", res_map)
 		response := res_map["response"]
 		if response == 1 {
 			err = controllers.Send(phone)
