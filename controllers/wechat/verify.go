@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"net/http"
+	"reflect"
 	"time"
 	"wozaizhao.com/gate/common"
 	"wozaizhao.com/gate/config"
@@ -83,7 +84,7 @@ func TencentCaptcha(c *gin.Context) {
 	if err := json.Unmarshal(res_json, &res_map); err == nil {
 		common.LogDebug("res_map", res_map)
 		response := res_map["response"]
-		common.LogDebug("response", response == 1)
+		common.LogDebug("response", reflect.TypeOf(response))
 		if response == 1 {
 			err = controllers.Send(phone)
 			if err != nil {
