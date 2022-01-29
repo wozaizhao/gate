@@ -26,10 +26,10 @@ var CAPTCHA_ID string = cfg.GeetestID
 var CAPTCHA_KEY string = cfg.GeetestKey
 
 // geetest 服务地址
-const API_SERVER string = "http://gcaptcha4.geetest.com"
+const geetestServer string = "http://gcaptcha4.geetest.com"
 
 // geetest 验证接口
-var URL = API_SERVER + "/validate" + "?captcha_id=" + CAPTCHA_ID
+var geetestURL = geetestServer + "/validate" + "?captcha_id=" + CAPTCHA_ID
 
 // GeetestVerify
 func GeetestVerify(c *gin.Context) {
@@ -46,16 +46,16 @@ func GeetestVerify(c *gin.Context) {
 	pass_token := c.Query("pass_token")
 	gen_time := c.Query("gen_time")
 	phone := c.Query("phone")
-	from := c.Query("from")
-	if from == "wechat" {
-		err := send(phone)
-		if err != nil {
-			RenderError(c, err)
-			return
-		}
-		RenderSuccess(c, true, message)
-		return
-	}
+	// from := c.Query("from")
+	// if from == "wechat" {
+	// 	err := send(phone)
+	// 	if err != nil {
+	// 		RenderError(c, err)
+	// 		return
+	// 	}
+	// 	RenderSuccess(c, true, message)
+	// 	return
+	// }
 	// 生成签名
 	// 生成签名使用标准的hmac算法，使用用户当前完成验证的流水号lot_number作为原始消息message，使用客户验证私钥作为key
 	// 采用sha256散列算法将message和key进行单向散列生成最终的 “sign_token” 签名
@@ -72,11 +72,11 @@ func GeetestVerify(c *gin.Context) {
 	// 发起post请求
 	// 设置5s超时
 	cli := http.Client{Timeout: time.Second * 5}
-	resp, err := cli.PostForm(URL, form_data)
+	resp, err := cli.PostForm(geetestURL, form_data)
 	if err != nil || resp.StatusCode != 200 {
 		// 当请求发生异常时，应放行通过，以免阻塞业务。
 		common.LogError("GeetestLogin PostForm", err)
-		err = send(phone)
+		err = Send(phone)
 		if err != nil {
 			RenderError(c, err)
 			return
@@ -92,7 +92,7 @@ func GeetestVerify(c *gin.Context) {
 	if err := json.Unmarshal(res_json, &res_map); err == nil {
 		result := res_map["result"]
 		if result == "success" {
-			err = send(phone)
+			err = Send(phone)
 			if err != nil {
 				RenderError(c, err)
 				return
@@ -113,7 +113,7 @@ func hmac_encode(key string, data string) string {
 	return hex.EncodeToString(mac.Sum(nil))
 }
 
-func send(phone string) error {
+func Send(phone string) error {
 	cfg := config.GetConfig()
 	code, err := models.CreateCaptcha(phone)
 	if err != nil {
