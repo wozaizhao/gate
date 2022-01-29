@@ -74,6 +74,8 @@ func TencentCaptcha(c *gin.Context) {
 		return
 	}
 
+	defer resp.Body.Close()
+
 	res_json, _ := ioutil.ReadAll(resp.Body)
 	var res_map map[string]interface{}
 	// 响应json数据如：{"errcode": 0, "errmsg": "ok", "response":1, "evil_level":70, "err_msg":""}
