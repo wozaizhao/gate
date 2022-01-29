@@ -30,6 +30,7 @@ func TencentCaptcha(c *gin.Context) {
 	common.LogDebug("fullURL", fullURL)
 	cfg := config.GetConfig()
 	var userip string = c.ClientIP()
+	common.LogDebug("userip", userip)
 	var message string
 	if cfg.Mode != "production" {
 		message = "开发模式下可输入任意验证码"
