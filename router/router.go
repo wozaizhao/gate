@@ -21,19 +21,15 @@ func SetupRouter() *gin.Engine {
 	r.GET("/wechat/getConfig", wechat.GetConfig)
 	r.GET("/wechat/captcha", wechat.TencentCaptcha)
 
-	r.GET("/captcha", controllers.GeetestVerify)        // 极验验证
-	r.POST("/login", controllers.Login)                 // 使用用户名密码登录
+	r.GET("/captcha", controllers.GeetestVerify) // 极验验证
+	// r.POST("/login", controllers.Login)                 // 使用用户名密码登录
 	r.POST("/loginByPhone", controllers.LoginByPhone)   // 手机号登录
 	r.POST("/shortcutLogin", controllers.LoginByOpenID) // 快捷登录
-	// r.GET("/checkPhone", controllers.CheckPhoneExist)   // 检测手机号
-	// r.POST("/register", controllers.Register)            // 注册
-	// r.GET("/captcha", controllers.GetCaptcha)            // 获取验证码
 
 	// 注册用户可以访问 /user
 	user := r.Group("/user", controllers.UserAuth())
 	{
 		user.GET("/currentUser", controllers.CurrentUser) // 当前帐户
-		user.POST("/linkwechat", controllers.LinkWechat)  // 关联openID
 		user.PUT("/edit", controllers.UpdateUser)         // 设置用户昵称、头像、性别、用户名、密码
 		user.POST("/upload", controllers.Upload)          // 上传
 	}

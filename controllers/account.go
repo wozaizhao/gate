@@ -138,8 +138,6 @@ func CurrentUser(c *gin.Context) {
 	RenderSuccess(c, res, "")
 }
 
-func LinkWechat(c *gin.Context) {}
-
 type updateUserReq struct {
 	Phone     string `json:"phone"`
 	Nickname  string `json:"nickname"`
