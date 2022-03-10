@@ -21,8 +21,8 @@ func SetupRouter() *gin.Engine {
 	r.GET("/wechat/getConfig", wechat.GetConfig)
 	r.GET("/wechat/captcha", wechat.TencentCaptcha)
 
-	r.GET("/captcha", controllers.GeetestVerify) // 极验验证
-	// r.POST("/login", controllers.Login)                 // 使用用户名密码登录
+	r.GET("/captcha", controllers.GeetestVerify)        // 极验验证
+	r.POST("/login", controllers.Login)                 // 使用用户名密码登录
 	r.POST("/loginByPhone", controllers.LoginByPhone)   // 手机号登录
 	r.POST("/shortcutLogin", controllers.LoginByOpenID) // 快捷登录
 

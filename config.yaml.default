@@ -5,31 +5,46 @@ mode: development
 
 # 使用redis来存放access_token
 redis:
-  host: redisthostip:6379
+  host: redist host ip:6379
 
 # mysql配置
 mysql:
-  host: mysqlhostip
-  port: mysqlport
-  username: mysqlusername
-  password: mysqluserpassword
-  database: mysqldatabase
+  host: mysql host ip
+  port: mysql port
+  username: mysql username
+  password: mysql password
+  database: mysql database
 
 # jwt 密钥
-jwtsecret: jwtsecretword
+jwtsecret: your jwtsecretword
 
 # 微信公众号相关配置
 officialAccountConfig:
-  appID: officialAccount appID
-  appSecret: officialAccount appSecret
-  token: officialAccount token
+  appID: your officialAccount appID
+  appSecret: your officialAccount appSecret
+  token: your officialAccount token
 
 # 小程序相关配置
 miniProgramConfig:
-  appID: weapp appID
-  appSecret: weapp appSecret
+  appID: your weapp appID
+  appSecret: your weapp appSecret
 
 # 阿里云相关配置
 aliyunConfig:
-  AccessKeyID: aliyun accessKeyID
-  AccessKeySecret: aliyun accessKeySecret
+  AccessKeyID: your aliyun accessKeyID
+  AccessKeySecret: your aliyun accessKeySecret
+  endpoint: dysmsapi.aliyuncs.com
+  signName: your signName
+  loginTemplateCode: your templateCode
+  registerTemplateCode: your templateCode
+
+# 极验相关配置
+geetestConfig:
+  geetestID: your geetestID
+  geetestKey: your geetestKey
+
+# 七牛云相关配置
+qiniuConfig:
+  accessKey: your accessKey
+  secretKey: your secretKey
+  bucket: your bucketname

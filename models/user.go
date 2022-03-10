@@ -1,6 +1,7 @@
 package models
 
 import (
+	"errors"
 	"gorm.io/gorm"
 	"time"
 	"wozaizhao.com/gate/common"
@@ -20,7 +21,7 @@ type User struct {
 	Gender    int    `json:"gender" gorm:"type:tinyint(1);DEFAULT '0'"`          // 性别
 	Phone     string `json:"phone" gorm:"type:varchar(20);unique;DEFAULT ''"`    // 手机号
 	Username  string `json:"username" gorm:"type:varchar(30);DEFAULT ''"`        // 用户名
-	Password  string `json:"password" gorm:"type:varchar(30);DEFAULT ''"`        // 密码
+	Password  string `json:"password" gorm:"type:varchar(64);DEFAULT ''"`        // 密码
 	Status    uint   `json:"status" gorm:"type:tinyint(1);NOT NULL;DEFAULT '0'"` // 状态 1 初始值 正常 2 已失效
 	Role      uint   `json:"role" gorm:"type:tinyint(1);DEFAULT '0'"`            // 角色 1 初始值 普通用户 2 管理员 3 vip
 	Credit    int    `json:"credit" gorm:"type:int(11);DEFAULT '0'"`             // 用户积分
@@ -33,6 +34,16 @@ func GetUserByPhone(phone string) (User, error) {
 	} else {
 		user, err := createUser(phone)
 		return user, err
+	}
+}
+
+func VerifyUser(username, password string) (user User, err error) {
+	r := DB.Where("username = ? and password = ?", username, password).Find(&user)
+	exist := r.RowsAffected > 0
+	if exist {
+		return user, nil
+	} else {
+		return user, errors.New("user not found")
 	}
 }
 

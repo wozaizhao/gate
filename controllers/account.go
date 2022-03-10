@@ -2,17 +2,46 @@ package controllers
 
 import (
 	"github.com/gin-gonic/gin"
-	"net/http"
+	"wozaizhao.com/gate/common"
 	"wozaizhao.com/gate/config"
 	"wozaizhao.com/gate/middlewares"
 	"wozaizhao.com/gate/models"
 )
 
-func Login(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"code": 200, "errMsg": ""})
+type normalLoginReq struct {
+	Username string `json:"username" binding:"required"`
+	Password string `json:"password" binding:"required"`
 }
 
-func LoginWeapp(c *gin.Context) {}
+func Login(c *gin.Context) {
+	var s normalLoginReq
+	if err := c.ShouldBindJSON(&s); err != nil {
+		RenderBadRequest(c, err)
+		return
+	}
+	user, err := models.VerifyUser(s.Username, s.Password)
+
+	if err != nil {
+		RenderFail(c, err.Error())
+		return
+	}
+
+	if common.ADMIN_ROLE == user.Role {
+		var token, errorGenerateToken = middlewares.GenerateToken(user.ID, user.Phone)
+		if errorGenerateToken != nil {
+			RenderError(c, errorGenerateToken)
+			return
+		}
+		var res loginRes
+		res.Token = token
+		res.User = basicUserInfo(user)
+
+		RenderSuccess(c, res, "登录成功")
+		return
+	} else {
+		RenderFail(c, "不是管理员")
+	}
+}
 
 type loginReq struct {
 	Phone  string `json:"phone" binding:"required"`
