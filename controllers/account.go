@@ -193,6 +193,45 @@ func UpdateUser(c *gin.Context) {
 
 }
 
-func AdminGetUsers(c *gin.Context) {}
+type usersRes struct {
+	List  []UserInfo `json:"list"`
+	Total int64      `json:"total"`
+}
+
+func AdminGetUsers(c *gin.Context) {
+	pageNumParam := c.DefaultQuery("pageNum", "1")
+	pageSizeParam := c.DefaultQuery("pageSize", "10")
+	pageNum, _ := common.ParseInt(pageNumParam)
+	pageSize, _ := common.ParseInt(pageSizeParam)
+	users, err := models.GetUsers(int(pageNum), int(pageSize))
+	if err != nil {
+		RenderError(c, err)
+		return
+	}
+
+	vsm := make([]UserInfo, len(users))
+	for i, v := range users {
+		vsm[i] = UserInfo{
+			ID:        v.ID,
+			NickName:  v.Nickname,
+			Bio:       v.Bio,
+			AvatarURL: v.AvatarURL,
+			Gender:    v.Gender,
+			Phone:     v.Phone,
+			Username:  v.Username,
+			Status:    v.Status,
+			Role:      v.Role,
+			Credit:    v.Credit,
+		}
+	}
+
+	var total = models.GetUserCount()
+	var pageCount = float64(total) / float64(pageSize)
+	var res = usersRes{
+		List:  vsm,
+		Total: common.Round(pageCount),
+	}
+	RenderSuccess(c, res, "")
+}
 
 func AdminEditUser(c *gin.Context) {}

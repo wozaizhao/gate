@@ -76,6 +76,18 @@ func GetUserByID(userID uint) (user User, err error) {
 	return
 }
 
+// 分页获取用户
+func GetUsers(pageNum, pageSize int) (users []User, err error) {
+	r := DB.Scopes(Paginate(pageNum, pageSize)).Find(&users)
+	err = r.Error
+	return
+}
+
+func GetUserCount() (count int64) {
+	DB.Model(&User{}).Count(&count)
+	return
+}
+
 // 获取用户信息
 // func GetUserByOpenID(openID string) (user User, err error) {
 // 	r := DB.Where("open_id = ?", openID).Find(&user)
