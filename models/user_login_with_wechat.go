@@ -11,7 +11,7 @@ type UserLoginWithWechat struct {
 	CreatedAt time.Time      `json:"created_at"`
 	UpdatedAt time.Time      `json:"updated_at"`
 	DeletedAt gorm.DeletedAt `gorm:"index"`
-	OpenID    string         `json:"open_id" gorm:"unique;type:varchar(40);DEFAULT ''"` // openID 小程序登录获取
+	OpenID    string         `json:"open_id" gorm:"unique;type:varchar(40);DEFAULT ''"`
 	UserID    uint           `json:"userID"`
 }
 

@@ -2,9 +2,11 @@ package controllers
 
 import (
 	"errors"
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"strings"
+
+	"github.com/gin-gonic/gin"
+
 	// "wozaizhao.com/eden/config"
 	"wozaizhao.com/gate/common"
 	"wozaizhao.com/gate/middlewares"
@@ -42,11 +44,11 @@ func UserAuth() gin.HandlerFunc {
 			return
 		}
 		userStatus := models.GetUserStatus(claims.UserID)
-		if common.STATUS_NOT_ACTIVATED == userStatus {
+		if common.USER_STATUS_NOT_ACTIVATED == userStatus {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "error", "message": common.ERROR_USER_NOT_ACTIVATED})
 			return
 
-		} else if common.STATUS_FORBIDDEN == userStatus {
+		} else if common.USER_STATUS_FORBIDDEN == userStatus {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "error", "message": common.ERROR_USER_SUSPENDED})
 			return
 		}
@@ -62,12 +64,15 @@ func AdminAuth() gin.HandlerFunc {
 			c.AbortWithStatus(http.StatusUnauthorized)
 			return
 		}
-		if common.ADMIN_ROLE == models.GetUserRole(claims.UserID) {
-			c.Set("userID", claims.UserID)
-			c.Next()
-		} else {
-			c.AbortWithStatus(http.StatusUnauthorized)
-		}
+		// todo check admin
+		c.Set("userID", claims.UserID)
+		c.Next()
+		// if common.ADMIN_ROLE == models.GetUserRole(claims.UserID) {
+		// 	c.Set("userID", claims.UserID)
+		// 	c.Next()
+		// } else {
+		// 	c.AbortWithStatus(http.StatusUnauthorized)
+		// }
 	}
 
 }

@@ -1,6 +1,9 @@
 package controllers
 
 import (
+	"strings"
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"wozaizhao.com/gate/common"
 	"wozaizhao.com/gate/config"
@@ -19,6 +22,7 @@ func Login(c *gin.Context) {
 		RenderBadRequest(c, err)
 		return
 	}
+	// todo 还需返回用户的角色和菜单
 	user, err := models.VerifyUser(s.Username, s.Password)
 
 	if err != nil {
@@ -26,21 +30,27 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	if common.ADMIN_ROLE == user.Role {
-		var token, errorGenerateToken = middlewares.GenerateToken(user.ID, user.Phone)
-		if errorGenerateToken != nil {
-			RenderError(c, errorGenerateToken)
-			return
-		}
-		var res loginRes
-		res.Token = token
-		res.User = basicUserInfo(user)
-
-		RenderSuccess(c, res, "登录成功")
+	// todo 判断是否是管理员
+	// if common.ADMIN_ROLE == user.Role {
+	var token, errorGenerateToken = middlewares.GenerateToken(user.ID, user.Phone)
+	if errorGenerateToken != nil {
+		RenderError(c, errorGenerateToken)
 		return
-	} else {
-		RenderFail(c, "不是管理员")
 	}
+	roles, err := models.GetUserRole(user.ID)
+	if err != nil {
+		RenderError(c, err)
+		return
+	}
+	var res loginRes
+	res.Token = token
+	res.User = basicUserInfo(user, roles)
+
+	RenderSuccess(c, res, "登录成功")
+	// return
+	// } else {
+	// 	RenderFail(c, "不是管理员")
+	// }
 }
 
 type loginReq struct {
@@ -55,16 +65,16 @@ type loginRes struct {
 }
 
 type UserInfo struct {
-	ID        uint   `json:"id"`
-	NickName  string `json:"nickname"`  // 昵称
-	Bio       string `json:"bio"`       // 简介
-	AvatarURL string `json:"avatarUrl"` // 头像
-	Gender    int    `json:"gender"`    // 性别
-	Phone     string `json:"phone"`     // 手机号
-	Username  string `json:"username"`  // 用户名
-	Status    uint   `json:"status"`    // 状态 1 初始值 正常 2 已失效
-	Role      uint   `json:"role"`      // 角色 1 初始值 普通用户 2 管理员 3 vip
-	Credit    int    `json:"credit"`    // 用户积分
+	ID        uint                `json:"id"`
+	Nickname  string              `json:"nickname"`  // 昵称
+	Bio       string              `json:"bio"`       // 简介
+	AvatarURL string              `json:"avatarUrl"` // 头像
+	Gender    int                 `json:"gender"`    // 性别
+	Phone     string              `json:"phone"`     // 手机号
+	Username  string              `json:"username"`  // 用户名
+	Status    uint                `json:"status"`    // 状态 1 初始值 正常 2 已失效
+	Role      []models.RoleSimple `json:"role"`      // 角色 1 初始值 普通用户 2 管理员 3 vip
+	// Credit    int    `json:"credit"`    // 用户积分
 }
 
 func LoginByPhone(c *gin.Context) {
@@ -84,7 +94,6 @@ func LoginByPhone(c *gin.Context) {
 			return
 		}
 	}
-
 	user, err := models.GetUserByPhone(s.Phone)
 	if err != nil {
 		RenderError(c, err)
@@ -95,9 +104,14 @@ func LoginByPhone(c *gin.Context) {
 		RenderError(c, errorGenerateToken)
 		return
 	}
+	roles, err := models.GetUserRole(user.ID)
+	if err != nil {
+		RenderError(c, err)
+		return
+	}
 	var res loginRes
 	res.Token = token
-	res.User = basicUserInfo(user)
+	res.User = basicUserInfo(user, roles)
 
 	RenderSuccess(c, res, "登录成功")
 	if s.OpenID != "" {
@@ -124,6 +138,7 @@ func LoginByOpenID(c *gin.Context) {
 		RenderFail(c, "")
 		return
 	}
+	// todo 还需返回用户的角色和功能
 	user, err := models.GetUserByID(record.UserID)
 	if err != nil {
 		RenderError(c, err)
@@ -134,15 +149,20 @@ func LoginByOpenID(c *gin.Context) {
 		RenderError(c, errorGenerateToken)
 		return
 	}
+	roles, err := models.GetUserRole(user.ID)
+	if err != nil {
+		RenderError(c, err)
+		return
+	}
 	var res loginRes
 	res.Token = token
-	res.User = basicUserInfo(user)
+	res.User = basicUserInfo(user, roles)
 
 	RenderSuccess(c, res, "")
 }
 
-func basicUserInfo(user models.User) (userInfo UserInfo) {
-	return UserInfo{ID: user.ID, NickName: user.Nickname, Bio: user.Bio, AvatarURL: user.AvatarURL, Gender: user.Gender, Phone: user.Phone, Username: user.Username, Status: user.Status, Role: user.Role, Credit: user.Credit}
+func basicUserInfo(user models.User, roles []models.RoleSimple) (userInfo UserInfo) {
+	return UserInfo{ID: user.ID, Nickname: user.Nickname, Bio: user.Bio, AvatarURL: user.AvatarURL, Gender: user.Gender, Phone: user.Phone, Username: user.Username, Status: user.Status, Role: roles}
 }
 
 // type captchaRes struct {
@@ -162,7 +182,7 @@ func CurrentUser(c *gin.Context) {
 		return
 	}
 	var res loginRes
-	res.User = UserInfo{ID: user.ID, NickName: user.Nickname, Bio: user.Bio, AvatarURL: user.AvatarURL, Gender: user.Gender, Phone: user.Phone, Username: user.Username, Status: user.Status, Role: user.Role, Credit: user.Credit}
+	res.User = UserInfo{ID: user.ID, Nickname: user.Nickname, Bio: user.Bio, AvatarURL: user.AvatarURL, Gender: user.Gender, Phone: user.Phone, Username: user.Username, Status: user.Status}
 
 	RenderSuccess(c, res, "")
 }
@@ -193,8 +213,24 @@ func UpdateUser(c *gin.Context) {
 
 }
 
+type UserData struct {
+	ID        uint                `json:"id"`
+	Username  string              `json:"username"`
+	Nickname  string              `json:"nickname"`
+	AvatarURL string              `json:"avatarUrl"`
+	Phone     string              `json:"phone"`
+	Gender    int                 `json:"gender"`
+	Status    uint                `json:"status"`
+	CreatedAt time.Time           `json:"created_at"`
+	Bio       string              `json:"bio"`
+	Roles     []models.RoleSimple `json:"roles"`
+	// RoleNames    string    `json:"role_names"`
+	// RoleKeys     string    `json:"role_keys"`
+	// RoleStatuses string    `json:"role_statuses"`
+}
+
 type usersRes struct {
-	List  []UserInfo `json:"list"`
+	List  []UserData `json:"list"`
 	Total int64      `json:"total"`
 }
 
@@ -208,20 +244,32 @@ func AdminGetUsers(c *gin.Context) {
 		RenderError(c, err)
 		return
 	}
-
-	vsm := make([]UserInfo, len(users))
+	vsm := make([]UserData, len(users))
 	for i, v := range users {
-		vsm[i] = UserInfo{
+		var roles []models.RoleSimple
+		if len(v.RoleNames) > 0 {
+			roleNames := strings.Split(v.RoleNames, ",")
+			roleKeys := strings.Split(v.RoleKeys, ",")
+			roleStatuses := strings.Split(v.RoleStatuses, ",")
+			common.LogDebug("roleNames", len(roleNames))
+			roles = make([]models.RoleSimple, len(roleNames))
+			for j, role := range roleNames {
+				roleStatus, _ := common.ParseInt(roleStatuses[j])
+				roles[j] = models.RoleSimple{RoleName: role, RoleKey: roleKeys[j], RoleStatus: uint(roleStatus)}
+			}
+		}
+		vsm[i] = UserData{
 			ID:        v.ID,
-			NickName:  v.Nickname,
+			Nickname:  v.Nickname,
 			Bio:       v.Bio,
 			AvatarURL: v.AvatarURL,
 			Gender:    v.Gender,
 			Phone:     v.Phone,
 			Username:  v.Username,
 			Status:    v.Status,
-			Role:      v.Role,
-			Credit:    v.Credit,
+			Roles:     roles,
+			// Role:      v.Role,
+			// Credit:    v.Credit,
 		}
 	}
 

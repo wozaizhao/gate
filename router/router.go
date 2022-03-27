@@ -26,6 +26,14 @@ func SetupRouter() *gin.Engine {
 	r.POST("/loginByPhone", controllers.LoginByPhone)   // 手机号登录
 	r.POST("/shortcutLogin", controllers.LoginByOpenID) // 快捷登录
 
+	r.GET("/dict/cities", controllers.GetCities)
+	r.GET("/dict/provinces", controllers.GetProvinces)
+	r.GET("/dict/regions", controllers.GetRegions)
+	r.GET("/dict/allRegions", controllers.GetAllRegions)
+	// r.POST("/dict/addCity", controllers.AddCity)
+	// r.POST("/dict/addProvince", controllers.AddProvince)
+	// r.POST("/dict/addRegion", controllers.AddRegion)
+
 	// 注册用户可以访问 /user
 	user := r.Group("/user", controllers.UserAuth())
 	{
@@ -37,8 +45,16 @@ func SetupRouter() *gin.Engine {
 	// 管理员才能访问 /admin
 	admin := r.Group("/admin", controllers.AdminAuth())
 	{
-		admin.GET("/users", controllers.AdminGetUsers)     // 获取所有用户
-		admin.PUT("/users/:id", controllers.AdminEditUser) // 编辑用户状态、角色、积分等
+		admin.GET("/users", controllers.AdminGetUsers)          // 获取所有用户
+		admin.PUT("/users/:id", controllers.AdminEditUser)      // 编辑用户状态、角色、积分等
+		admin.POST("/users/configRole", controllers.ConfigRole) // 配置用户角色
+		admin.POST("/roles", controllers.AddRole)               // 添加角色
+		admin.GET("/roles", controllers.GetRoles)               // 获取所有角色
+		admin.POST("/menus", controllers.AddMenu)               // 添加菜单
+		admin.POST("/features", controllers.AddFeature)         // 添加功能
+		// admin.PUT("/roles/:id", controllers.EditRole) // 编辑角色
+		admin.POST("/roles/configMenu", controllers.ConfigRoleMenu)       // 配置角色菜单
+		admin.POST("/roles/configFeature", controllers.ConfigRoleFeature) // 配置角色功能
 	}
 
 	return r

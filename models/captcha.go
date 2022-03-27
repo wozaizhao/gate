@@ -13,8 +13,8 @@ type Captcha struct {
 	UpdatedAt time.Time      `json:"updated_at"`
 	DeletedAt gorm.DeletedAt `gorm:"index"`
 	ExpiredAt time.Time      `json:"expired_at"`
-	Phone     string         `json:"phone" gorm:"type:varchar(20);NOT NULL;"` // 手机号
-	Code      string         `json:"code" gorm:"type:varchar(6);NOT NULL;"`
+	Phone     string         `json:"phone" gorm:"type:varchar(20);NOT NULL;comment:手机号"`
+	Code      string         `json:"code" gorm:"type:varchar(6);NOT NULL;comment:验证码"`
 }
 
 func genCaptchaCode(len int) (string, error) {
