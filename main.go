@@ -19,7 +19,7 @@ func main() {
 	// }
 
 	middlewares.InitWechat()
-	middlewares.InitSmsClient()
+	// middlewares.InitSmsClient()
 
 	models.DBinit()
 	r.Run(cfg.Listen)

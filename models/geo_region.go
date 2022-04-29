@@ -52,18 +52,6 @@ func GetRegionsByCode(code string) (regions []regionRes, err error) {
 	return
 }
 
-// type children struct {
-// 	Name     string     `json:"text"`
-// 	Code     string     `json:"value"`
-// 	Children []children `json:"children"`
-// }
-
-// type allRegion struct {
-// 	Name     string     `json:"text"`
-// 	Code     string     `json:"value"`
-// 	Children []children `json:"children"`
-// }
-
 type regionResWithParent struct {
 	Name       string `json:"name"`
 	Code       string `json:"code"`

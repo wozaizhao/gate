@@ -26,26 +26,3 @@ func Code2Session(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{"code": 200, "data": res, "errmsg": ""})
 }
-
-// type userInfoReq struct {
-// 	SessionKey    string `json:"sessionKey"`
-// 	EncryptedData string `json:"encryptedData"`
-// 	IV            string `json:"iv"`
-// }
-
-// func DecryptUserInfo(c *gin.Context) {
-// 	var req userInfoReq
-// 	if err := c.BindJSON(&req); err != nil {
-// 		c.JSON(http.StatusBadRequest, err.Error())
-// 		return
-// 	}
-// 	mini := middlewares.GetMiniProgram()
-// 	encryptor := mini.GetEncryptor()
-// 	plainData, err := encryptor.Decrypt(req.SessionKey, req.EncryptedData, req.IV)
-// 	if err != nil {
-// 		c.JSON(http.StatusInternalServerError, err.Error())
-// 		return
-// 	}
-// 	log.Debugf("plainData=%+v", plainData)
-// 	c.JSON(http.StatusOK, gin.H{"code": 200, "data": plainData, "errmsg": ""})
-// }

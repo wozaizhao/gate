@@ -1,7 +1,6 @@
 package models
 
 import (
-	"errors"
 	"time"
 
 	"gorm.io/gorm"
@@ -18,50 +17,30 @@ type User struct {
 	Bio       string         `json:"bio" gorm:"type:varchar(50);DEFAULT '';comment:简介"`
 	AvatarURL string         `json:"avatarUrl" gorm:"type:varchar(255);DEFAULT '';comment:头像"`
 	Gender    int            `json:"gender" gorm:"type:tinyint(1);DEFAULT '0';comment:性别"`
-	Phone     string         `json:"phone" gorm:"type:varchar(20);unique;DEFAULT '';comment:手机号"`
-	Username  string         `json:"username" gorm:"type:varchar(30);DEFAULT '';comment:用户名"`
-	Password  string         `json:"password" gorm:"type:varchar(64);DEFAULT '';comment:密码"`
+	OpenID    string         `json:"open_id" gorm:"unique;type:varchar(40);DEFAULT ''"`
 	Status    uint           `json:"status" gorm:"type:tinyint(1);NOT NULL;DEFAULT '0';comment:状态"`
 }
 
-func GetUserByPhone(phone string) (User, error) {
-	user, exist := phoneExist(phone)
+func GetUserByOpenID(openID string) (User, error) {
+	user, exist := openIDExist(openID)
 	if exist {
 		return user, nil
 	} else {
-		user, err := createUser(phone)
+		user, err := createUser(openID)
 		return user, err
 	}
 }
 
-func VerifyUser(username, password string) (user User, err error) {
-	r := DB.Where("username = ? and password = ?", username, password).Find(&user)
-	exist := r.RowsAffected > 0
-	if exist {
-		return user, nil
-	} else {
-		return user, errors.New("user not found")
-	}
-}
-
-// user := User{Name: "Jinzhu", Age: 18, Birthday: time.Now()}
-
-// result := db.Create(&user) // pass pointer of data to Create
-
-// user.ID             // returns inserted data's primary key
-// result.Error        // returns error
-// result.RowsAffected // returns inserted records count
-
 // 创建帐户
-func createUser(phone string) (user User, err error) {
-	user = User{Phone: phone, Nickname: "用户" + phone[5:], Status: common.USER_STATUS_NORMAL}
+func createUser(openID string) (user User, err error) {
+	user = User{OpenID: openID, Status: common.USER_STATUS_NORMAL}
 	result := DB.Create(&user)
 	err = result.Error
 	return
 }
 
-func phoneExist(phone string) (user User, exist bool) {
-	r := DB.Where("phone = ? ", phone).Find(&user)
+func openIDExist(openID string) (user User, exist bool) {
+	r := DB.Where("open_id = ? ", openID).Find(&user)
 	exist = r.RowsAffected > 0
 	return
 }
@@ -75,10 +54,8 @@ func GetUserByID(userID uint) (user User, err error) {
 
 type UserInfoWithRole struct {
 	ID           uint      `json:"id"`
-	Username     string    `json:"username"`
 	Nickname     string    `json:"nickname"`
 	AvatarURL    string    `json:"avatarUrl"`
-	Phone        string    `json:"phone"`
 	Gender       int       `json:"gender"`
 	Status       uint      `json:"status"`
 	CreatedAt    time.Time `json:"created_at"`
@@ -92,7 +69,7 @@ type UserInfoWithRole struct {
 func GetUsers(pageNum, pageSize int) (users []UserInfoWithRole, err error) {
 	// r := DB.Scopes(Paginate(pageNum, pageSize)).Find(&users)
 	// err = r.Error
-	sqlstr := `select u.id, u.username, u.nickname, u.avatar_url, u.phone, u.gender, u.status, u.created_at,
+	sqlstr := `select u.id, u.nickname, u.avatar_url, u.phone, u.gender, u.status, u.created_at,
 	        u.bio, GROUP_CONCAT(r.role_name) as role_names, GROUP_CONCAT(r.role_key) as role_keys, GROUP_CONCAT(r.status) as role_statuses
 			from users as u 
 				left join user_roles as ur on u.id = ur.user_id
@@ -108,42 +85,12 @@ func GetUserCount() (count int64) {
 	return
 }
 
-// 获取用户信息
-// func GetUserByOpenID(openID string) (user User, err error) {
-// 	r := DB.Where("open_id = ?", openID).Find(&user)
-// 	err = r.Error
-// 	return
-// }
-
 // 更新用户信息
-func UpdateUser(userID uint, Gender int, Phone, Nickname, AvatarURL, Username, Password, Bio string) (res bool, err error) {
+func UpdateUser(userID uint, gender int, nickname, avatarURL, bio string) (res bool, err error) {
 	var user User
 	user.ID = userID
-	r := DB.Model(&user).Updates(User{Gender: Gender, Phone: Phone, Nickname: Nickname, AvatarURL: AvatarURL, Username: Username, Password: Password, Bio: Bio})
+	r := DB.Model(&user).Updates(User{Gender: gender, Nickname: nickname, AvatarURL: avatarURL, Bio: bio})
 	return r.RowsAffected > 0, r.Error
-}
-
-// 更换手机号
-func UpdatePhone(oldphone, phone string) {
-
-}
-
-// 关联用户openID
-// func LinkUserByOpenID(userID uint, openID string) {
-// 	r := DB.Model(&User{}).Where("id = ?", userID).Update("open_id", openID)
-// 	if r.Error != nil {
-// 		common.LogError("LinkUserByOpenID", r.Error)
-// 	}
-// }
-
-// 使用微信信息设置用户昵称和头像
-func SetUserInfoByWechat(openID, nickname, avatar string) {
-
-}
-
-// 设置用户名密码
-func SetUsernameAndPassword(userID uint, username, password string) {
-
 }
 
 // 设置用户状态
@@ -159,29 +106,4 @@ func GetUserStatus(userID uint) int {
 		return int(user.Status)
 	}
 	return -1
-}
-
-// 设置用户角色
-func UpdateUserRole(userID uint, role int) {
-
-}
-
-// // 查询用户角色
-// func GetUserRole(userID uint) int {
-// 	var user User
-// 	r := DB.Where("id = ? ", userID).Find(&user)
-// 	if r.RowsAffected > 0 {
-// 		return int(user.Role)
-// 	}
-// 	return -1
-// }
-
-// 设置用户积分
-func UpdateUserCredit(userID uint, credit int) {
-
-}
-
-// 查询用户积分
-func GetUserCredit(userID uint) {
-
 }

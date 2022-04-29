@@ -2,9 +2,8 @@ package common
 
 // 用户状态
 const (
-	USER_STATUS_NOT_ACTIVATED = 0
-	USER_STATUS_NORMAL        = 1
-	USER_STATUS_FORBIDDEN     = 2
+	USER_STATUS_NORMAL    = 1
+	USER_STATUS_FORBIDDEN = 2
 )
 
 // 用户角色

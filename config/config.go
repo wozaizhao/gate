@@ -35,9 +35,9 @@ type Config struct {
 	JwtSecret              string `yaml:"jwtsecret"`
 	*OfficialAccountConfig `yaml:"officialAccountConfig"`
 	*MiniProgramConfig     `yaml:"miniProgramConfig"`
-	*AliyunConfig          `yaml:"aliyunConfig"`
-	*GeetestConfig         `yaml:"geetestConfig"`
-	*QiniuConfig           `yaml:"qiniuConfig"`
+	// *AliyunConfig          `yaml:"aliyunConfig"`
+	// *GeetestConfig         `yaml:"geetestConfig"`
+	*QiniuConfig `yaml:"qiniuConfig"`
 }
 
 // OfficialAccountConfig 公众号相关配置
@@ -55,20 +55,20 @@ type MiniProgramConfig struct {
 }
 
 // AliyunConfig 阿里云相关配置
-type AliyunConfig struct {
-	AccessKeyID          string `yaml:"accessKeyID"`
-	AccessKeySecret      string `yaml:"accessKeySecret"`
-	Endpoint             string `yaml:"endpoint"`
-	SignName             string `yaml:"signName"`
-	LoginTemplateCode    string `yaml:"loginTemplateCode"`
-	RegisterTemplateCode string `yaml:"registerTemplateCode"`
-}
+// type AliyunConfig struct {
+// 	AccessKeyID          string `yaml:"accessKeyID"`
+// 	AccessKeySecret      string `yaml:"accessKeySecret"`
+// 	Endpoint             string `yaml:"endpoint"`
+// 	SignName             string `yaml:"signName"`
+// 	LoginTemplateCode    string `yaml:"loginTemplateCode"`
+// 	RegisterTemplateCode string `yaml:"registerTemplateCode"`
+// }
 
 // 极验相关配置
-type GeetestConfig struct {
-	GeetestID  string `yaml:"geetestID"`
-	GeetestKey string `yaml:"geetestKey"`
-}
+// type GeetestConfig struct {
+// 	GeetestID  string `yaml:"geetestID"`
+// 	GeetestKey string `yaml:"geetestKey"`
+// }
 
 // 七牛云相关配置
 type QiniuConfig struct {

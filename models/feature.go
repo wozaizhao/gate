@@ -19,7 +19,7 @@ type Feature struct {
 	Status          uint           `json:"status" gorm:"type:tinyint(1);NOT NULL;DEFAULT '0';comment:状态"`
 }
 
-// 创建菜单
+// 创建功能
 func CreateFeature(featureName, featureKey, featureDesc string, featureParentID uint) (feature Feature, err error) {
 	feature = Feature{FeatureName: featureName, FeatureKey: featureKey, FeatureDesc: featureDesc, FeatureParentID: featureParentID, Status: common.STATUS_NORMAL}
 	result := DB.Create(&feature)

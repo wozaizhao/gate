@@ -44,11 +44,7 @@ func UserAuth() gin.HandlerFunc {
 			return
 		}
 		userStatus := models.GetUserStatus(claims.UserID)
-		if common.USER_STATUS_NOT_ACTIVATED == userStatus {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "error", "message": common.ERROR_USER_NOT_ACTIVATED})
-			return
-
-		} else if common.USER_STATUS_FORBIDDEN == userStatus {
+		if common.USER_STATUS_FORBIDDEN == userStatus {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "error", "message": common.ERROR_USER_SUSPENDED})
 			return
 		}
