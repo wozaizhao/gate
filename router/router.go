@@ -24,7 +24,7 @@ func SetupRouter() *gin.Engine {
 	// r.GET("/captcha", controllers.GeetestVerify)        // 极验验证
 	// r.POST("/login", controllers.Login) // 使用用户名密码登录
 	// r.POST("/loginByPhone", controllers.LoginByPhone)   // 手机号登录
-	r.POST("/login", controllers.LoginByOpenID) // 快捷登录
+	r.POST("/weappLogin", controllers.LoginByOpenID) // 快捷登录
 
 	r.GET("/dict/cities", controllers.GetCities)
 	r.GET("/dict/provinces", controllers.GetProvinces)

@@ -1,9 +1,9 @@
 package models
 
 import (
-	"time"
-
+	"errors"
 	"gorm.io/gorm"
+	"time"
 	"wozaizhao.com/gate/common"
 )
 
@@ -17,6 +17,8 @@ type User struct {
 	Bio       string         `json:"bio" gorm:"type:varchar(50);DEFAULT '';comment:简介"`
 	AvatarURL string         `json:"avatarUrl" gorm:"type:varchar(255);DEFAULT '';comment:头像"`
 	Gender    int            `json:"gender" gorm:"type:tinyint(1);DEFAULT '0';comment:性别"`
+	Username  string         `json:"username" gorm:"type:varchar(30);DEFAULT '';comment:用户名"`
+	Password  string         `json:"password" gorm:"type:varchar(64);DEFAULT '';comment:密码"`
 	OpenID    string         `json:"open_id" gorm:"unique;type:varchar(40);DEFAULT ''"`
 	Status    uint           `json:"status" gorm:"type:tinyint(1);NOT NULL;DEFAULT '0';comment:状态"`
 }
@@ -28,6 +30,16 @@ func GetUserByOpenID(openID string) (User, error) {
 	} else {
 		user, err := createUser(openID)
 		return user, err
+	}
+}
+
+func VerifyUser(username, password string) (user User, err error) {
+	r := DB.Where("username = ? and password = ?", username, password).Find(&user)
+	exist := r.RowsAffected > 0
+	if exist {
+		return user, nil
+	} else {
+		return user, errors.New("user not found")
 	}
 }
 
@@ -54,6 +66,7 @@ func GetUserByID(userID uint) (user User, err error) {
 
 type UserInfoWithRole struct {
 	ID           uint      `json:"id"`
+	Username     string    `json:"username"`
 	Nickname     string    `json:"nickname"`
 	AvatarURL    string    `json:"avatarUrl"`
 	Gender       int       `json:"gender"`
@@ -69,7 +82,7 @@ type UserInfoWithRole struct {
 func GetUsers(pageNum, pageSize int) (users []UserInfoWithRole, err error) {
 	// r := DB.Scopes(Paginate(pageNum, pageSize)).Find(&users)
 	// err = r.Error
-	sqlstr := `select u.id, u.nickname, u.avatar_url, u.phone, u.gender, u.status, u.created_at,
+	sqlstr := `select u.id, u.username, u.nickname, u.avatar_url, u.gender, u.status, u.created_at,
 	        u.bio, GROUP_CONCAT(r.role_name) as role_names, GROUP_CONCAT(r.role_key) as role_keys, GROUP_CONCAT(r.status) as role_statuses
 			from users as u 
 				left join user_roles as ur on u.id = ur.user_id

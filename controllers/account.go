@@ -10,6 +10,48 @@ import (
 	"wozaizhao.com/gate/models"
 )
 
+type normalLoginReq struct {
+	Username string `json:"username" binding:"required"`
+	Password string `json:"password" binding:"required"`
+}
+
+func Login(c *gin.Context) {
+	var s normalLoginReq
+	if err := c.ShouldBindJSON(&s); err != nil {
+		RenderBadRequest(c, err)
+		return
+	}
+	// todo 还需返回用户的角色和菜单
+	user, err := models.VerifyUser(s.Username, s.Password)
+
+	if err != nil {
+		RenderFail(c, err.Error())
+		return
+	}
+
+	// todo 判断是否是管理员
+	// if common.ADMIN_ROLE == user.Role {
+	var token, errorGenerateToken = middlewares.GenerateToken(user.ID)
+	if errorGenerateToken != nil {
+		RenderError(c, errorGenerateToken)
+		return
+	}
+	roles, err := models.GetUserRole(user.ID)
+	if err != nil {
+		RenderError(c, err)
+		return
+	}
+	var res loginRes
+	res.Token = token
+	res.User = basicUserInfo(user, roles)
+
+	RenderSuccess(c, res, "登录成功")
+	// return
+	// } else {
+	// 	RenderFail(c, "不是管理员")
+	// }
+}
+
 type loginRes struct {
 	User  UserInfo `json:"user"`
 	Token string   `json:"token"`
