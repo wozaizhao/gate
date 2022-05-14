@@ -234,7 +234,7 @@ type addRepoReq struct {
 	GithubUpdatedAt string `json:"githubUpdatedAt"`
 	License         string `json:"license"`
 	Topics          string `json:"topics"`
-	GithubLikeCount string `json:"githubLikeCount"`
+	GithubLikeCount int    `json:"githubLikeCount"`
 }
 
 func AddRepo(c *gin.Context) {
@@ -243,10 +243,10 @@ func AddRepo(c *gin.Context) {
 		RenderError(c, err)
 		return
 	}
-	githubLikeCount, _ := common.ParseInt(repo.GithubLikeCount)
-	githubCreatedAt, _ := time.Parse(`"`+time.RFC3339+`"`, repo.GithubCreatedAt)
-	githubUpdatedAt, _ := time.Parse(`"`+time.RFC3339+`"`, repo.GithubUpdatedAt)
-	if err := models.CreateFeRepo(repo.OwnerName, repo.RepoName, repo.RepoDesc, repo.Language, repo.OwnerAvatarURL, repo.HomePage, repo.GithubURL, repo.License, repo.Topics, uint(githubLikeCount), githubCreatedAt, githubUpdatedAt); err != nil {
+	// githubLikeCount, _ := common.ParseInt(repo.GithubLikeCount)
+	githubCreatedAt, _ := time.Parse(""+time.RFC3339+"", repo.GithubCreatedAt)
+	githubUpdatedAt, _ := time.Parse(""+time.RFC3339+"", repo.GithubUpdatedAt)
+	if err := models.CreateFeRepo(repo.OwnerName, repo.RepoName, repo.RepoDesc, repo.Language, repo.OwnerAvatarURL, repo.HomePage, repo.GithubURL, repo.License, repo.Topics, uint(repo.GithubLikeCount), &githubCreatedAt, &githubUpdatedAt); err != nil {
 		RenderError(c, err)
 		return
 	}
