@@ -2,16 +2,17 @@ package models
 
 import (
 	"errors"
-	"gorm.io/gorm"
 	"time"
+
+	"gorm.io/gorm"
 	"wozaizhao.com/gate/common"
 )
 
 // User 用户
 type User struct {
 	ID        uint           `json:"id" gorm:"primaryKey"`
-	CreatedAt time.Time      `json:"created_at"`
-	UpdatedAt time.Time      `json:"updated_at"`
+	CreatedAt time.Time      `json:"createdAt"`
+	UpdatedAt time.Time      `json:"updatedAt"`
 	DeletedAt gorm.DeletedAt `gorm:"index"`
 	Nickname  string         `json:"nickname" gorm:"type:varchar(50);DEFAULT '';comment:昵称"`
 	Bio       string         `json:"bio" gorm:"type:varchar(50);DEFAULT '';comment:简介"`
@@ -71,7 +72,7 @@ type UserInfoWithRole struct {
 	AvatarURL    string    `json:"avatarUrl"`
 	Gender       int       `json:"gender"`
 	Status       uint      `json:"status"`
-	CreatedAt    time.Time `json:"created_at"`
+	CreatedAt    time.Time `json:"createdAt"`
 	Bio          string    `json:"bio"`
 	RoleNames    string    `json:"role_names"`
 	RoleKeys     string    `json:"role_keys"`
@@ -82,7 +83,7 @@ type UserInfoWithRole struct {
 func GetUsers(pageNum, pageSize int) (users []UserInfoWithRole, err error) {
 	// r := DB.Scopes(Paginate(pageNum, pageSize)).Find(&users)
 	// err = r.Error
-	sqlstr := `select u.id, u.username, u.nickname, u.avatar_url, u.gender, u.status, u.created_at,
+	sqlstr := `select u.id, u.username, u.nickname, u.avatar_url, u.gender, u.status, u.createdAt,
 	        u.bio, GROUP_CONCAT(r.role_name) as role_names, GROUP_CONCAT(r.role_key) as role_keys, GROUP_CONCAT(r.status) as role_statuses
 			from users as u 
 				left join user_roles as ur on u.id = ur.user_id

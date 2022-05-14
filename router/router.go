@@ -40,6 +40,13 @@ func SetupRouter() *gin.Engine {
 		user.GET("/currentUser", controllers.CurrentUser) // 当前帐户
 		user.PUT("/edit", controllers.UpdateUser)         // 设置用户昵称、头像、性别、用户名、密码
 		user.POST("/upload", controllers.Upload)          // 上传
+		user.GET("/wikis", controllers.GetWikis)          // 获取wikis
+		user.GET("/gists", controllers.GetGists)          // 获取gists
+		user.GET("/cates", controllers.GetCates)          // 获取cates
+		user.GET("/resources", controllers.GetResources)  // 获取resources
+		user.GET("/authors", controllers.GetAuthors)      // 获取author
+		user.GET("/author/:id", controllers.GetAuthor)    // 获取author
+		user.GET("/navs", controllers.GetNavs)            // 获取navs
 	}
 
 	// 管理员才能访问 /admin
@@ -55,6 +62,13 @@ func SetupRouter() *gin.Engine {
 		// admin.PUT("/roles/:id", controllers.EditRole) // 编辑角色
 		admin.POST("/roles/configMenu", controllers.ConfigRoleMenu)       // 配置角色菜单
 		admin.POST("/roles/configFeature", controllers.ConfigRoleFeature) // 配置角色功能
+		admin.POST("/wikis", controllers.AddWiki)                         // 添加wiki
+		admin.POST("/gists", controllers.AddGist)                         // 添加gist
+		admin.POST("/cates", controllers.AddCate)                         // 添加cate
+		admin.POST("/resources", controllers.AddResource)                 // 添加resource
+		admin.POST("/authors", controllers.AddAuthor)                     // 添加author
+		admin.POST("/navs", controllers.AddNav)                           // 添加nav
+		admin.POST("/repos", controllers.AddRepo)                         // 添加repo")
 	}
 
 	return r

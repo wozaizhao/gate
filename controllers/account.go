@@ -149,7 +149,7 @@ type UserData struct {
 	AvatarURL string              `json:"avatarUrl"`
 	Gender    int                 `json:"gender"`
 	Status    uint                `json:"status"`
-	CreatedAt time.Time           `json:"created_at"`
+	CreatedAt time.Time           `json:"createdAt"`
 	Bio       string              `json:"bio"`
 	Roles     []models.RoleSimple `json:"roles"`
 	// RoleNames    string    `json:"role_names"`

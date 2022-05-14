@@ -9,8 +9,8 @@ import (
 // Region 行政区
 type Region struct {
 	ID         uint           `json:"id" gorm:"primaryKey"`
-	CreatedAt  time.Time      `json:"created_at"`
-	UpdatedAt  time.Time      `json:"updated_at"`
+	CreatedAt  time.Time      `json:"createdAt"`
+	UpdatedAt  time.Time      `json:"updatedAt"`
 	DeletedAt  gorm.DeletedAt `gorm:"index"`
 	Name       string         `json:"name" gorm:"type:varchar(15);NOT NULL;comment:行政区名称"`
 	Code       string         `json:"code" gorm:"type:varchar(10);NOT NULL;comment:行政区编码"`

@@ -18,3 +18,8 @@ const (
 	STATUS_NORMAL   = 1 // 正常
 	STATUS_DISABLED = 2 // 禁用
 )
+
+// 优先级
+const (
+	PRIORITY_NORMAL = 1
+)

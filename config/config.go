@@ -38,6 +38,7 @@ type Config struct {
 	// *AliyunConfig          `yaml:"aliyunConfig"`
 	// *GeetestConfig         `yaml:"geetestConfig"`
 	*QiniuConfig `yaml:"qiniuConfig"`
+	*XfyunConfig `yaml:"xfyunConfig"`
 }
 
 // OfficialAccountConfig 公众号相关配置
@@ -75,6 +76,11 @@ type QiniuConfig struct {
 	AccessKey string `yaml:"accessKey"`
 	SecretKey string `yaml:"secretKey"`
 	Bucket    string `yaml:"bucket"`
+}
+
+type XfyunConfig struct {
+	APISecret string `yaml:"APISecret"`
+	APIKey    string `yaml:"APIKey"`
 }
 
 // GetConfig 获取配置

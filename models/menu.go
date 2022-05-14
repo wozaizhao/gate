@@ -1,16 +1,17 @@
 package models
 
 import (
-	"gorm.io/gorm"
 	"time"
+
+	"gorm.io/gorm"
 	"wozaizhao.com/gate/common"
 )
 
 // Menu 后台管理端菜单
 type Menu struct {
 	ID           uint           `json:"id" gorm:"primaryKey"`
-	CreatedAt    time.Time      `json:"created_at"`
-	UpdatedAt    time.Time      `json:"updated_at"`
+	CreatedAt    time.Time      `json:"createdAt"`
+	UpdatedAt    time.Time      `json:"updatedAt"`
 	DeletedAt    gorm.DeletedAt `gorm:"index"`
 	MenuName     string         `json:"menu_name" gorm:"type:varchar(20);NOT NULL;comment:菜单名称"`
 	MenuKey      string         `json:"menu_key" gorm:"type:varchar(20);NOT NULL;comment:菜单标识"`

@@ -1,16 +1,17 @@
 package models
 
 import (
-	"gorm.io/gorm"
 	"time"
+
+	"gorm.io/gorm"
 	"wozaizhao.com/gate/common"
 )
 
 // Feature 前台功能
 type Feature struct {
 	ID              uint           `json:"id" gorm:"primaryKey"`
-	CreatedAt       time.Time      `json:"created_at"`
-	UpdatedAt       time.Time      `json:"updated_at"`
+	CreatedAt       time.Time      `json:"createdAt"`
+	UpdatedAt       time.Time      `json:"updatedAt"`
 	DeletedAt       gorm.DeletedAt `gorm:"index"`
 	FeatureName     string         `json:"feature_name" gorm:"type:varchar(20);NOT NULL;comment:功能名称"`
 	FeatureKey      string         `json:"feature_key" gorm:"type:varchar(20);NOT NULL;comment:功能标识"`

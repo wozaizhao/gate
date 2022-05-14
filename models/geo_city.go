@@ -1,15 +1,16 @@
 package models
 
 import (
-	"gorm.io/gorm"
 	"time"
+
+	"gorm.io/gorm"
 )
 
 // City 城市
 type City struct {
 	ID         uint           `json:"id" gorm:"primaryKey"`
-	CreatedAt  time.Time      `json:"created_at"`
-	UpdatedAt  time.Time      `json:"updated_at"`
+	CreatedAt  time.Time      `json:"createdAt"`
+	UpdatedAt  time.Time      `json:"updatedAt"`
 	DeletedAt  gorm.DeletedAt `gorm:"index"`
 	Letter     string         `json:"letter" gorm:"type:varchar(2);NOT NULL;comment:首字母"`
 	Name       string         `json:"name" gorm:"type:varchar(12);NOT NULL;comment:城市名称"`
