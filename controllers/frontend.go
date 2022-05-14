@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"github.com/gin-gonic/gin"
+	"time"
 	"wozaizhao.com/gate/common"
 	"wozaizhao.com/gate/models"
 )
@@ -229,6 +230,8 @@ type addRepoReq struct {
 	OwnerAvatarURL  string `json:"ownerAvatarURL"`
 	HomePage        string `json:"homePage"`
 	GithubURL       string `json:"githubURL"`
+	GithubCreatedAt string `json:"githubCreatedAt"`
+	GithubUpdatedAt string `json:"githubUpdatedAt"`
 	License         string `json:"license"`
 	Topics          string `json:"topics"`
 	GithubLikeCount string `json:"githubLikeCount"`
@@ -241,7 +244,9 @@ func AddRepo(c *gin.Context) {
 		return
 	}
 	githubLikeCount, _ := common.ParseInt(repo.GithubLikeCount)
-	if err := models.CreateFeRepo(repo.OwnerName, repo.RepoName, repo.RepoDesc, repo.Language, repo.OwnerAvatarURL, repo.HomePage, repo.GithubURL, repo.License, repo.Topics, uint(githubLikeCount)); err != nil {
+	githubCreatedAt, _ := time.Parse(`"`+time.RFC3339+`"`, repo.GithubCreatedAt)
+	githubUpdatedAt, _ := time.Parse(`"`+time.RFC3339+`"`, repo.GithubUpdatedAt)
+	if err := models.CreateFeRepo(repo.OwnerName, repo.RepoName, repo.RepoDesc, repo.Language, repo.OwnerAvatarURL, repo.HomePage, repo.GithubURL, repo.License, repo.Topics, uint(githubLikeCount), githubCreatedAt, githubUpdatedAt); err != nil {
 		RenderError(c, err)
 		return
 	}

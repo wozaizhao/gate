@@ -55,13 +55,13 @@ func UserAuth() gin.HandlerFunc {
 
 func AdminAuth() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		claims, errorTokenValidator := TokenValidator(c)
-		if errorTokenValidator != nil {
-			c.AbortWithStatus(http.StatusUnauthorized)
-			return
-		}
+		// claims, errorTokenValidator := TokenValidator(c)
+		// if errorTokenValidator != nil {
+		// 	c.AbortWithStatus(http.StatusUnauthorized)
+		// 	return
+		// }
 		// todo check admin
-		c.Set("userID", claims.UserID)
+		// c.Set("userID", claims.UserID)
 		c.Next()
 		// if common.ADMIN_ROLE == models.GetUserRole(claims.UserID) {
 		// 	c.Set("userID", claims.UserID)

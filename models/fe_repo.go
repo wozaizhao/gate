@@ -18,18 +18,20 @@ type FeRepo struct {
 	RepoDesc        string         `json:"repoDesc" gorm:"type:varchar(80);NOT NULL;comment:仓库描述"`
 	Language        string         `json:"language" gorm:"type:varchar(20);NOT NULL;comment:语言"`
 	OwnerAvatarURL  string         `json:"ownerAvatarURL" gorm:"type:varchar(100);NOT NULL;comment:所有者头像"`
-	HomePage        string         `json:"homePage" gorm:"type:varchar(50);NOT NULL;comment:主页"`
+	HomePage        string         `json:"homePage" gorm:"type:varchar(50);comment:主页"`
 	GithubURL       string         `json:"githubURL" gorm:"type:varchar(255);comment:Github网址"`
-	License         string         `json:"license" gorm:"type:varchar(20);NOT NULL;comment:许可证"`
-	Topics          string         `json:"topics" gorm:"type:varchar(40);NOT NULL;comment:话题"`
+	License         string         `json:"license" gorm:"type:varchar(20);comment:许可证"`
+	Topics          string         `json:"topics" gorm:"type:varchar(40);comment:话题"`
 	LikeCount       uint           `json:"likeCount" gorm:"comment:点赞数"`
 	ViewCount       uint           `json:"viewCount" gorm:"comment:浏览数"`
 	GithubLikeCount uint           `json:"githubLikeCount" gorm:"comment:Github点赞数"`
+	GithubCreatedAt time.Time      `json:"githubCreatedAt" gorm:"comment:Github创建时间"`
+	GithubUpdatedAt time.Time      `json:"githubUpdatedAt" gorm:"comment:Github更新时间"`
 	Status          uint           `json:"status" gorm:"type:tinyint(1);NOT NULL;DEFAULT '0';comment:状态"`
 }
 
-func CreateFeRepo(ownerName, repoName, repoDesc, language, ownerAvatarURL, homePage, githubURL, license, topics string, githubLikeCount uint) error {
-	repo := FeRepo{OwnerName: ownerName, RepoName: repoName, RepoDesc: repoDesc, Language: language, OwnerAvatarURL: ownerAvatarURL, HomePage: homePage, GithubURL: githubURL, License: license, Topics: topics, GithubLikeCount: githubLikeCount, Status: common.STATUS_NORMAL}
+func CreateFeRepo(ownerName, repoName, repoDesc, language, ownerAvatarURL, homePage, githubURL, license, topics string, githubLikeCount uint, githubCreatedAt, githubUpdatedAt time.Time) error {
+	repo := FeRepo{OwnerName: ownerName, RepoName: repoName, RepoDesc: repoDesc, Language: language, OwnerAvatarURL: ownerAvatarURL, HomePage: homePage, GithubURL: githubURL, License: license, Topics: topics, GithubLikeCount: githubLikeCount, GithubCreatedAt: githubCreatedAt, GithubUpdatedAt: githubUpdatedAt, Status: common.STATUS_NORMAL}
 	err := DB.Create(&repo).Error
 	return err
 }
