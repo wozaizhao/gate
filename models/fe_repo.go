@@ -24,14 +24,15 @@ type FeRepo struct {
 	Topics          string         `json:"topics" gorm:"type:varchar(40);comment:话题"`
 	LikeCount       uint           `json:"likeCount" gorm:"comment:点赞数"`
 	ViewCount       uint           `json:"viewCount" gorm:"comment:浏览数"`
+	GithubID        uint           `json:"githubID" gorm:"comment:GithubID"`
 	GithubLikeCount uint           `json:"githubLikeCount" gorm:"comment:Github点赞数"`
 	GithubCreatedAt *time.Time     `json:"githubCreatedAt" gorm:"comment:Github创建时间"`
 	GithubUpdatedAt *time.Time     `json:"githubUpdatedAt" gorm:"comment:Github更新时间"`
 	Status          uint           `json:"status" gorm:"type:tinyint(1);NOT NULL;DEFAULT '0';comment:状态"`
 }
 
-func CreateFeRepo(ownerName, repoName, repoDesc, language, ownerAvatarURL, homePage, githubURL, license, topics string, githubLikeCount uint, githubCreatedAt, githubUpdatedAt *time.Time) error {
-	repo := FeRepo{OwnerName: ownerName, RepoName: repoName, RepoDesc: repoDesc, Language: language, OwnerAvatarURL: ownerAvatarURL, HomePage: homePage, GithubURL: githubURL, License: license, Topics: topics, GithubLikeCount: githubLikeCount, GithubCreatedAt: githubCreatedAt, GithubUpdatedAt: githubUpdatedAt, Status: common.STATUS_NORMAL}
+func CreateFeRepo(ownerName, repoName, repoDesc, language, ownerAvatarURL, homePage, githubURL, license, topics string, githubLikeCount, githubID uint, githubCreatedAt, githubUpdatedAt *time.Time) error {
+	repo := FeRepo{OwnerName: ownerName, RepoName: repoName, RepoDesc: repoDesc, Language: language, OwnerAvatarURL: ownerAvatarURL, HomePage: homePage, GithubURL: githubURL, License: license, Topics: topics, GithubLikeCount: githubLikeCount, GithubID: githubID, GithubCreatedAt: githubCreatedAt, GithubUpdatedAt: githubUpdatedAt, Status: common.STATUS_NORMAL}
 	err := DB.Create(&repo).Error
 	return err
 }

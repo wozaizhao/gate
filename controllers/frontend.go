@@ -235,6 +235,7 @@ type addRepoReq struct {
 	License         string `json:"license"`
 	Topics          string `json:"topics"`
 	GithubLikeCount int    `json:"githubLikeCount"`
+	GithubID        int    `json:"githubID"`
 }
 
 func AddRepo(c *gin.Context) {
@@ -243,10 +244,14 @@ func AddRepo(c *gin.Context) {
 		RenderError(c, err)
 		return
 	}
+	if models.IsRepoExist(repo.OwnerName, repo.RepoName) {
+		RenderFail(c, "repo already exist!")
+		return
+	}
 	// githubLikeCount, _ := common.ParseInt(repo.GithubLikeCount)
 	githubCreatedAt, _ := time.Parse(""+time.RFC3339+"", repo.GithubCreatedAt)
 	githubUpdatedAt, _ := time.Parse(""+time.RFC3339+"", repo.GithubUpdatedAt)
-	if err := models.CreateFeRepo(repo.OwnerName, repo.RepoName, repo.RepoDesc, repo.Language, repo.OwnerAvatarURL, repo.HomePage, repo.GithubURL, repo.License, repo.Topics, uint(repo.GithubLikeCount), &githubCreatedAt, &githubUpdatedAt); err != nil {
+	if err := models.CreateFeRepo(repo.OwnerName, repo.RepoName, repo.RepoDesc, repo.Language, repo.OwnerAvatarURL, repo.HomePage, repo.GithubURL, repo.License, repo.Topics, uint(repo.GithubLikeCount), uint(repo.GithubID), &githubCreatedAt, &githubUpdatedAt); err != nil {
 		RenderError(c, err)
 		return
 	}
