@@ -12,7 +12,7 @@ type Menu struct {
 	ID           uint           `json:"id" gorm:"primaryKey"`
 	CreatedAt    time.Time      `json:"createdAt"`
 	UpdatedAt    time.Time      `json:"updatedAt"`
-	DeletedAt    gorm.DeletedAt `gorm:"index"`
+	DeletedAt    gorm.DeletedAt `json:"deletedAt" gorm:"index"`
 	MenuName     string         `json:"menu_name" gorm:"type:varchar(20);NOT NULL;comment:菜单名称"`
 	MenuKey      string         `json:"menu_key" gorm:"type:varchar(20);NOT NULL;comment:菜单标识"`
 	MenuDesc     string         `json:"menu_desc" gorm:"type:varchar(50);NOT NULL;comment:菜单描述"`

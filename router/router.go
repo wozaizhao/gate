@@ -22,7 +22,7 @@ func SetupRouter() *gin.Engine {
 	// r.GET("/wechat/captcha", wechat.TencentCaptcha)
 
 	// r.GET("/captcha", controllers.GeetestVerify)        // 极验验证
-	// r.POST("/login", controllers.Login) // 使用用户名密码登录
+	r.POST("/login", controllers.Login) // 使用用户名密码登录
 	// r.POST("/loginByPhone", controllers.LoginByPhone)   // 手机号登录
 	r.POST("/weappLogin", controllers.LoginByOpenID) // 快捷登录
 
@@ -37,16 +37,17 @@ func SetupRouter() *gin.Engine {
 	// 注册用户可以访问 /user
 	user := r.Group("/user", controllers.UserAuth())
 	{
-		user.GET("/currentUser", controllers.CurrentUser) // 当前帐户
-		user.PUT("/edit", controllers.UpdateUser)         // 设置用户昵称、头像、性别、用户名、密码
-		user.POST("/upload", controllers.Upload)          // 上传
-		user.GET("/wikis", controllers.GetWikis)          // 获取wikis
-		user.GET("/gists", controllers.GetGists)          // 获取gists
-		user.GET("/cates", controllers.GetCates)          // 获取cates
-		user.GET("/resources", controllers.GetResources)  // 获取resources
-		user.GET("/authors", controllers.GetAuthors)      // 获取author
-		user.GET("/author/:id", controllers.GetAuthor)    // 获取author
-		user.GET("/navs", controllers.GetNavs)            // 获取navs
+		user.GET("/currentUser", controllers.CurrentUser)  // 当前帐户
+		user.PUT("/edit", controllers.UpdateUser)          // 设置用户昵称、头像、性别、用户名、密码
+		user.POST("/upload", controllers.Upload)           // 上传
+		user.GET("/wikis", controllers.GetWikis)           // 获取wikis
+		user.GET("/gists", controllers.GetGists)           // 获取gists
+		user.GET("/cates", controllers.GetFeCates)         // 获取cates
+		user.GET("/resources", controllers.GetResources)   // 获取resources
+		user.GET("/authors", controllers.GetAuthors)       // 获取author
+		user.GET("/author/:id", controllers.GetAuthor)     // 获取author
+		user.GET("/navs", controllers.GetNavs)             // 获取navs
+		user.GET("/ecosystems", controllers.GetEcosystems) // 获取ecosystem
 	}
 
 	// 管理员才能访问 /admin
@@ -64,11 +65,16 @@ func SetupRouter() *gin.Engine {
 		admin.POST("/roles/configFeature", controllers.ConfigRoleFeature) // 配置角色功能
 		admin.POST("/wikis", controllers.AddWiki)                         // 添加wiki
 		admin.POST("/gists", controllers.AddGist)                         // 添加gist
-		admin.POST("/cates", controllers.AddCate)                         // 添加cate
+		admin.POST("/cates", controllers.AddFeRepoCate)                   // 添加cate
 		admin.POST("/resources", controllers.AddResource)                 // 添加resource
 		admin.POST("/authors", controllers.AddAuthor)                     // 添加author
 		admin.POST("/navs", controllers.AddNav)                           // 添加nav
-		admin.POST("/repos", controllers.AddRepo)                         // 添加repo")
+		admin.GET("/repos", controllers.GetRepos)
+		admin.GET("/repos/:id", controllers.GetRepo)
+		admin.POST("/repos", controllers.AddRepo)           // 添加repo
+		admin.PUT("/repos/:id", controllers.EditRepo)       // 编辑repo
+		admin.DELETE("/repos/:id", controllers.DeleteRepo)  // 删除repo
+		admin.POST("/ecosystems", controllers.AddEcosystem) // 添加ecosystem
 	}
 
 	return r

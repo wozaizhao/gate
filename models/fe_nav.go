@@ -12,7 +12,7 @@ type FeNav struct {
 	ID                  uint           `json:"id" gorm:"primaryKey"`
 	CreatedAt           time.Time      `json:"createdAt"`
 	UpdatedAt           time.Time      `json:"updatedAt"`
-	DeletedAt           gorm.DeletedAt `gorm:"index"`
+	DeletedAt           gorm.DeletedAt `json:"deletedAt" gorm:"index"`
 	NavTitle            string         `json:"navTitle" gorm:"type:varchar(20);NOT NULL;comment:导航名称"`
 	Icon                string         `json:"icon" gorm:"type:varchar(20);NOT NULL;comment:图标"`
 	Image               string         `json:"image" gorm:"type:varchar(20);NOT NULL;comment:图片"`

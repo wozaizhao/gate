@@ -11,7 +11,7 @@ type Province struct {
 	ID         uint           `json:"id" gorm:"primaryKey"`
 	CreatedAt  time.Time      `json:"createdAt"`
 	UpdatedAt  time.Time      `json:"updatedAt"`
-	DeletedAt  gorm.DeletedAt `gorm:"index"`
+	DeletedAt  gorm.DeletedAt `json:"deletedAt" gorm:"index"`
 	Letter     string         `json:"letter" gorm:"type:varchar(2);NOT NULL;comment:首字母"`
 	Name       string         `json:"name" gorm:"type:varchar(3);NOT NULL;comment:省级行政区名称"`
 	Code       string         `json:"code" gorm:"type:varchar(6);NOT NULL;comment:省级行政区编码"`

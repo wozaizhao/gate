@@ -12,7 +12,7 @@ type FeAuthor struct {
 	ID         uint           `json:"id" gorm:"primaryKey"`
 	CreatedAt  time.Time      `json:"createdAt"`
 	UpdatedAt  time.Time      `json:"updatedAt"`
-	DeletedAt  gorm.DeletedAt `gorm:"index"`
+	DeletedAt  gorm.DeletedAt `json:"deletedAt" gorm:"index"`
 	AuthorName string         `json:"authorName" gorm:"type:varchar(20);NOT NULL;comment:作者姓名"`
 	AuthorDesc string         `json:"authorDesc" gorm:"type:varchar(20);NOT NULL;comment:作者描述"`
 	WebURL     string         `json:"webURL" gorm:"type:varchar(20);NOT NULL;comment:作者URL"`

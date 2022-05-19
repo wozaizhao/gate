@@ -1,8 +1,9 @@
 package controllers
 
 import (
-	"github.com/gin-gonic/gin"
 	"time"
+
+	"github.com/gin-gonic/gin"
 	"wozaizhao.com/gate/common"
 	"wozaizhao.com/gate/models"
 )
@@ -31,15 +32,6 @@ func GetGists(c *gin.Context) {
 		return
 	}
 	RenderSuccess(c, gists, "")
-}
-
-func GetCates(c *gin.Context) {
-	cates, err := models.GetFeCates()
-	if err != nil {
-		RenderError(c, err)
-		return
-	}
-	RenderSuccess(c, cates, "")
 }
 
 func GetResources(c *gin.Context) {
@@ -122,24 +114,6 @@ func AddGist(c *gin.Context) {
 		return
 	}
 	if err := models.CreateFeGist(gist.GistName, gist.GistDesc, gist.GistContent); err != nil {
-		RenderError(c, err)
-		return
-	}
-	RenderSuccess(c, nil, "")
-}
-
-type addCateReq struct {
-	CateName string `json:"cateName" binding:"required"`
-	CateDesc string `json:"cateDesc"`
-}
-
-func AddCate(c *gin.Context) {
-	var cate addCateReq
-	if err := c.ShouldBindJSON(&cate); err != nil {
-		RenderError(c, err)
-		return
-	}
-	if err := models.CreateFeCate(cate.CateName, cate.CateDesc); err != nil {
 		RenderError(c, err)
 		return
 	}
@@ -256,4 +230,185 @@ func AddRepo(c *gin.Context) {
 		return
 	}
 	RenderSuccess(c, nil, "")
+}
+
+type editRepoReq struct {
+	ChineseHomePage string `json:"chineseHomePage"`
+	ChineseDesc     string `json:"chineseDesc"`
+	Tags            string `json:"tags"`
+	CateID          int    `json:"cateID"`
+	Status          int    `json:"status"`
+	EcosystemID     int    `json:"ecosystemID"`
+}
+
+func EditRepo(c *gin.Context) {
+	var idInUri IDInUri
+	var repo editRepoReq
+	if err := c.ShouldBindUri(&idInUri); err != nil {
+		RenderError(c, err)
+		return
+	}
+	if err := c.ShouldBindJSON(&repo); err != nil {
+		RenderError(c, err)
+		return
+	}
+	repoID, _ := common.ParseInt(idInUri.ID)
+	if err := models.UpdateRepoChineseInfo(uint(repoID), uint(repo.CateID), uint(repo.EcosystemID), uint(repo.Status), repo.ChineseHomePage, repo.ChineseDesc, repo.Tags); err != nil {
+		RenderError(c, err)
+		return
+	}
+	RenderSuccess(c, nil, "")
+}
+
+func DeleteRepo(c *gin.Context) {
+	var idInUri IDInUri
+	if err := c.ShouldBindUri(&idInUri); err != nil {
+		RenderError(c, err)
+		return
+	}
+	repoID, _ := common.ParseInt(idInUri.ID)
+	if err := models.DeleteRepo(uint(repoID)); err != nil {
+		RenderError(c, err)
+		return
+	}
+	RenderSuccess(c, nil, "")
+}
+
+type RepoRes struct {
+	List  []models.FeRepo `json:"list"`
+	Total int64           `json:"total"`
+}
+
+func GetRepos(c *gin.Context) {
+	pageNumParam := c.DefaultQuery("pageNum", "1")
+	pageSizeParam := c.DefaultQuery("pageSize", "10")
+	pageNum, _ := common.ParseInt(pageNumParam)
+	pageSize, _ := common.ParseInt(pageSizeParam)
+	repos, err := models.AdminGetRepos(int(pageNum), int(pageSize))
+	if err != nil {
+		RenderError(c, err)
+		return
+	}
+	var total = models.GetRepoCount()
+	var pageCount = float64(total) / float64(pageSize)
+	var res = RepoRes{
+		List:  repos,
+		Total: common.Round(pageCount),
+	}
+	RenderSuccess(c, res, "")
+}
+
+func GetRepo(c *gin.Context) {
+	var idInUri IDInUri
+	if err := c.ShouldBindUri(&idInUri); err != nil {
+		RenderError(c, err)
+		return
+	}
+	repoID, _ := common.ParseInt(idInUri.ID)
+	repo, err := models.AdminGetRepoByID(uint(repoID))
+
+	if err != nil {
+		RenderError(c, err)
+		return
+	}
+	RenderSuccess(c, repo, "")
+}
+
+type addFeRepoCateReq struct {
+	CateName     string `json:"cateName" binding:"required"`
+	CateCNName   string `json:"cateCNName" binding:"required"`
+	CateDesc     string `json:"cateDesc"`
+	CateParentID int    `json:"cateParentID"`
+}
+
+func AddFeRepoCate(c *gin.Context) {
+	var cate addFeRepoCateReq
+	if err := c.ShouldBindJSON(&cate); err != nil {
+		RenderError(c, err)
+		return
+	}
+	repoCate, err := models.CreateFeRepoCate(cate.CateName, cate.CateCNName, cate.CateDesc, uint(cate.CateParentID))
+	if err != nil {
+		RenderError(c, err)
+		return
+	}
+	RenderSuccess(c, repoCate, "")
+}
+
+type cateNode struct {
+	ID         uint        `json:"id"`
+	CateName   string      `json:"cateName"`
+	CateCNName string      `json:"cateCNName"`
+	CateDesc   string      `json:"cateDesc"`
+	Children   []*cateNode `json:"children"`
+}
+
+func GetFeCates(c *gin.Context) {
+	firstClasses, err := models.GetFirstClassRepoCates()
+	if err != nil {
+		RenderError(c, err)
+		return
+	}
+	all, err := models.GetFeRepoCates()
+	if err != nil {
+		RenderError(c, err)
+		return
+	}
+	tree := make([]*cateNode, 0)
+
+	for _, first := range firstClasses {
+		firstNode := &cateNode{
+			CateName:   first.CateName,
+			CateCNName: first.CateCNName,
+			CateDesc:   first.CateDesc,
+			ID:         first.ID,
+			// Children:   make([]*cateNode, 0),
+		}
+		firstChildren := make([]*cateNode, 0)
+		for _, cate := range all {
+			if cate.CateParentID == firstNode.ID {
+				var child = &cateNode{
+					CateName:   cate.CateName,
+					CateCNName: cate.CateCNName,
+					CateDesc:   cate.CateDesc,
+					ID:         cate.ID,
+					// Children:   make([]*cateNode, 0),
+				}
+				firstChildren = append(firstChildren, child)
+			}
+		}
+		if len(firstChildren) > 0 {
+			firstNode.Children = firstChildren
+		}
+		tree = append(tree, firstNode)
+	}
+	RenderSuccess(c, tree, "")
+}
+
+type addEcosystemReq struct {
+	EcosystemName string `json:"ecosystemName" binding:"required"`
+	EcosystemDesc string `json:"ecosystemDesc"`
+}
+
+func AddEcosystem(c *gin.Context) {
+	var req addEcosystemReq
+	if err := c.ShouldBindJSON(&req); err != nil {
+		RenderError(c, err)
+		return
+	}
+	ecosystem, err := models.CreateFeEcosystem(req.EcosystemName, req.EcosystemDesc)
+	if err != nil {
+		RenderError(c, err)
+		return
+	}
+	RenderSuccess(c, ecosystem, "")
+}
+
+func GetEcosystems(c *gin.Context) {
+	ecosystems, err := models.GetFeEcosystems()
+	if err != nil {
+		RenderError(c, err)
+		return
+	}
+	RenderSuccess(c, ecosystems, "")
 }

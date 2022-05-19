@@ -13,7 +13,7 @@ type User struct {
 	ID        uint           `json:"id" gorm:"primaryKey"`
 	CreatedAt time.Time      `json:"createdAt"`
 	UpdatedAt time.Time      `json:"updatedAt"`
-	DeletedAt gorm.DeletedAt `gorm:"index"`
+	DeletedAt gorm.DeletedAt `json:"deletedAt" gorm:"index"`
 	Nickname  string         `json:"nickname" gorm:"type:varchar(50);DEFAULT '';comment:昵称"`
 	Bio       string         `json:"bio" gorm:"type:varchar(50);DEFAULT '';comment:简介"`
 	AvatarURL string         `json:"avatarUrl" gorm:"type:varchar(255);DEFAULT '';comment:头像"`
@@ -83,7 +83,7 @@ type UserInfoWithRole struct {
 func GetUsers(pageNum, pageSize int) (users []UserInfoWithRole, err error) {
 	// r := DB.Scopes(Paginate(pageNum, pageSize)).Find(&users)
 	// err = r.Error
-	sqlstr := `select u.id, u.username, u.nickname, u.avatar_url, u.gender, u.status, u.createdAt,
+	sqlstr := `select u.id, u.username, u.nickname, u.avatar_url, u.gender, u.status, u.created_at,
 	        u.bio, GROUP_CONCAT(r.role_name) as role_names, GROUP_CONCAT(r.role_key) as role_keys, GROUP_CONCAT(r.status) as role_statuses
 			from users as u 
 				left join user_roles as ur on u.id = ur.user_id

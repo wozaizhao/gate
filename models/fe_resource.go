@@ -12,7 +12,7 @@ type FeResource struct {
 	ID                uint           `json:"id" gorm:"primaryKey"`
 	CreatedAt         time.Time      `json:"createdAt"`
 	UpdatedAt         time.Time      `json:"updatedAt"`
-	DeletedAt         gorm.DeletedAt `gorm:"index"`
+	DeletedAt         gorm.DeletedAt `json:"deletedAt" gorm:"index"`
 	ResourceName      string         `json:"resource_name" gorm:"type:varchar(20);NOT NULL;comment:资源名称"`
 	CateID            uint           `json:"cateID" gorm:"index;NOT NULL;comment:分类ID"`
 	AuthorID          uint           `json:"authorID" gorm:"index;comment:作者ID"`

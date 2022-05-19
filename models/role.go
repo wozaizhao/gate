@@ -12,7 +12,7 @@ type Role struct {
 	ID        uint           `json:"id" gorm:"primaryKey"`
 	CreatedAt time.Time      `json:"createdAt"`
 	UpdatedAt time.Time      `json:"updatedAt"`
-	DeletedAt gorm.DeletedAt `gorm:"index"`
+	DeletedAt gorm.DeletedAt `json:"deletedAt" gorm:"index"`
 	RoleName  string         `json:"role_name" gorm:"type:varchar(20);NOT NULL;comment:角色名称"`
 	RoleKey   string         `json:"role_key" gorm:"type:varchar(20);NOT NULL;comment:角色标识"`
 	RoleDesc  string         `json:"role_desc" gorm:"type:varchar(50);NOT NULL;comment:角色描述"`

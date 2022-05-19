@@ -11,7 +11,7 @@ type Region struct {
 	ID         uint           `json:"id" gorm:"primaryKey"`
 	CreatedAt  time.Time      `json:"createdAt"`
 	UpdatedAt  time.Time      `json:"updatedAt"`
-	DeletedAt  gorm.DeletedAt `gorm:"index"`
+	DeletedAt  gorm.DeletedAt `json:"deletedAt" gorm:"index"`
 	Name       string         `json:"name" gorm:"type:varchar(15);NOT NULL;comment:行政区名称"`
 	Code       string         `json:"code" gorm:"type:varchar(10);NOT NULL;comment:行政区编码"`
 	ParentCode string         `json:"parent_code" gorm:"type:varchar(10);NOT NULL;comment:父级编码"`

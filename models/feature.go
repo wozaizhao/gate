@@ -12,7 +12,7 @@ type Feature struct {
 	ID              uint           `json:"id" gorm:"primaryKey"`
 	CreatedAt       time.Time      `json:"createdAt"`
 	UpdatedAt       time.Time      `json:"updatedAt"`
-	DeletedAt       gorm.DeletedAt `gorm:"index"`
+	DeletedAt       gorm.DeletedAt `json:"deletedAt" gorm:"index"`
 	FeatureName     string         `json:"feature_name" gorm:"type:varchar(20);NOT NULL;comment:功能名称"`
 	FeatureKey      string         `json:"feature_key" gorm:"type:varchar(20);NOT NULL;comment:功能标识"`
 	FeatureDesc     string         `json:"feature_desc" gorm:"type:varchar(50);NOT NULL;comment:功能描述"`

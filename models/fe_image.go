@@ -12,7 +12,7 @@ type FeImage struct {
 	ID         uint           `json:"id" gorm:"primaryKey"`
 	CreatedAt  time.Time      `json:"createdAt"`
 	UpdatedAt  time.Time      `json:"updatedAt"`
-	DeletedAt  gorm.DeletedAt `gorm:"index"`
+	DeletedAt  gorm.DeletedAt `json:"deletedAt" gorm:"index"`
 	ImageName  string         `json:"imageName" gorm:"type:varchar(20);NOT NULL;comment:图片名称"`
 	ImageURL   string         `json:"imageURL" gorm:"type:varchar(20);NOT NULL;comment:图片URL"`
 	ImageDesc  string         `json:"imageDesc" gorm:"type:varchar(20);NOT NULL;comment:图片描述"`

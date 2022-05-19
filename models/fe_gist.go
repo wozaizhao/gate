@@ -12,7 +12,7 @@ type FeGist struct {
 	ID          uint           `json:"id" gorm:"primaryKey"`
 	CreatedAt   time.Time      `json:"createdAt"`
 	UpdatedAt   time.Time      `json:"updatedAt"`
-	DeletedAt   gorm.DeletedAt `gorm:"index"`
+	DeletedAt   gorm.DeletedAt `json:"deletedAt" gorm:"index"`
 	GistName    string         `json:"gistName" gorm:"type:varchar(20);NOT NULL;comment:代码片断名称"`
 	GistDesc    string         `json:"gistDesc" gorm:"type:varchar(20);NOT NULL;comment:代码片断描述"`
 	GistContent string         `json:"gistContent" gorm:"type:varchar(20);NOT NULL;comment:代码片断内容"`

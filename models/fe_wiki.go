@@ -12,7 +12,7 @@ type FeWiki struct {
 	ID          uint           `json:"id" gorm:"primaryKey"`
 	CreatedAt   time.Time      `json:"createdAt"`
 	UpdatedAt   time.Time      `json:"updatedAt"`
-	DeletedAt   gorm.DeletedAt `gorm:"index"`
+	DeletedAt   gorm.DeletedAt `json:"deletedAt" gorm:"index"`
 	WikiName    string         `json:"wikiName" gorm:"type:varchar(20);NOT NULL;comment:百科名称"`
 	WikiDesc    string         `json:"wikiDesc" gorm:"type:varchar(20);NOT NULL;comment:百科描述"`
 	WikiContent string         `json:"wikiContent" gorm:"type:varchar(20);NOT NULL;comment:百科内容"`
