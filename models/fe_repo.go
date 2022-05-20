@@ -54,9 +54,9 @@ func GetRepos(pageNum, pageSize int) ([]FeRepo, error) {
 	return repos, err
 }
 
-func AdminGetRepos(pageNum, pageSize int) ([]FeRepo, error) {
+func AdminGetRepos(pageNum, pageSize int, name string) ([]FeRepo, error) {
 	var repos []FeRepo
-	err := DB.Scopes(Paginate(pageNum, pageSize)).Order("github_like_count desc").Find(&repos).Error
+	err := DB.Scopes(Paginate(pageNum, pageSize)).Where("repo_name LIKE ?", name+"%").Order("github_like_count desc").Find(&repos).Error
 	return repos, err
 }
 

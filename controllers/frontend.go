@@ -282,9 +282,10 @@ type RepoRes struct {
 func GetRepos(c *gin.Context) {
 	pageNumParam := c.DefaultQuery("pageNum", "1")
 	pageSizeParam := c.DefaultQuery("pageSize", "10")
+	name := c.DefaultQuery("name", "")
 	pageNum, _ := common.ParseInt(pageNumParam)
 	pageSize, _ := common.ParseInt(pageSizeParam)
-	repos, err := models.AdminGetRepos(int(pageNum), int(pageSize))
+	repos, err := models.AdminGetRepos(int(pageNum), int(pageSize), name)
 	if err != nil {
 		RenderError(c, err)
 		return
