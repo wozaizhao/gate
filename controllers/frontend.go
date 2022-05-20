@@ -290,7 +290,7 @@ func GetRepos(c *gin.Context) {
 		RenderError(c, err)
 		return
 	}
-	var total = models.GetRepoCount()
+	var total = models.GetRepoCount(name)
 	var pageCount = float64(total) / float64(pageSize)
 	var res = RepoRes{
 		List:  repos,

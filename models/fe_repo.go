@@ -82,7 +82,7 @@ func DeleteRepo(id uint) error {
 	return err
 }
 
-func GetRepoCount() (count int64) {
-	DB.Model(&FeRepo{}).Count(&count)
+func GetRepoCount(name string) (count int64) {
+	DB.Model(&FeRepo{}).Where("repo_name LIKE ?", name+"%").Count(&count)
 	return
 }
