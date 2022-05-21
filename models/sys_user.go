@@ -21,6 +21,7 @@ type User struct {
 	Username  string         `json:"username" gorm:"type:varchar(30);DEFAULT '';comment:用户名"`
 	Password  string         `json:"password" gorm:"type:varchar(64);DEFAULT '';comment:密码"`
 	OpenID    string         `json:"open_id" gorm:"unique;type:varchar(40);DEFAULT ''"`
+	Roles     []Role         `json:"roles" gorm:"many2many:user_role;"`
 	Status    uint           `json:"status" gorm:"type:tinyint(1);NOT NULL;DEFAULT '0';comment:状态"`
 }
 
@@ -65,33 +66,35 @@ func GetUserByID(userID uint) (user User, err error) {
 	return
 }
 
-type UserInfoWithRole struct {
-	ID           uint      `json:"id"`
-	Username     string    `json:"username"`
-	Nickname     string    `json:"nickname"`
-	AvatarURL    string    `json:"avatarUrl"`
-	Gender       int       `json:"gender"`
-	Status       uint      `json:"status"`
-	CreatedAt    time.Time `json:"createdAt"`
-	Bio          string    `json:"bio"`
-	RoleNames    string    `json:"role_names"`
-	RoleKeys     string    `json:"role_keys"`
-	RoleStatuses string    `json:"role_statuses"`
-}
+// type UserInfoWithRole struct {
+// 	ID           uint      `json:"id"`
+// 	Username     string    `json:"username"`
+// 	Nickname     string    `json:"nickname"`
+// 	AvatarURL    string    `json:"avatarUrl"`
+// 	Gender       int       `json:"gender"`
+// 	Status       uint      `json:"status"`
+// 	CreatedAt    time.Time `json:"createdAt"`
+// 	Bio          string    `json:"bio"`
+// 	RoleNames    string    `json:"role_names"`
+// 	RoleKeys     string    `json:"role_keys"`
+// 	RoleStatuses string    `json:"role_statuses"`
+// }
 
 // 分页获取用户 联合查询用户role
-func GetUsers(pageNum, pageSize int) (users []UserInfoWithRole, err error) {
+func GetUsers(pageNum, pageSize int) (users []User, err error) {
+	err = DB.Scopes(Paginate(pageNum, pageSize)).Preload("Roles").Find(&users).Error
+	return users, err
 	// r := DB.Scopes(Paginate(pageNum, pageSize)).Find(&users)
 	// err = r.Error
-	sqlstr := `select u.id, u.username, u.nickname, u.avatar_url, u.gender, u.status, u.created_at,
-	        u.bio, GROUP_CONCAT(r.role_name) as role_names, GROUP_CONCAT(r.role_key) as role_keys, GROUP_CONCAT(r.status) as role_statuses
-			from users as u 
-				left join user_roles as ur on u.id = ur.user_id
-				left join roles as r on r.id = ur.role_id GROUP BY u.id`
-	r := DB.Raw(sqlstr).Scan(&users)
-	// result := DB.Where("user_id = ?", userID).Find(&userRoles)
-	err = r.Error
-	return
+	// sqlstr := `select u.id, u.username, u.nickname, u.avatar_url, u.gender, u.status, u.created_at,
+	//         u.bio, GROUP_CONCAT(r.role_name) as role_names, GROUP_CONCAT(r.role_key) as role_keys, GROUP_CONCAT(r.status) as role_statuses
+	// 		from users as u
+	// 			left join user_roles as ur on u.id = ur.user_id
+	// 			left join roles as r on r.id = ur.role_id GROUP BY u.id`
+	// r := DB.Raw(sqlstr).Scan(&users)
+	// // result := DB.Where("user_id = ?", userID).Find(&userRoles)
+	// err = r.Error
+	// return
 }
 
 func GetUserCount() (count int64) {

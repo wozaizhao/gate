@@ -17,7 +17,7 @@ var DB *gorm.DB
 
 // Models 数据库实体
 var models = []interface{}{
-	&User{}, &City{}, &Province{}, &Region{}, &UserRole{}, &RoleMenu{}, &RoleFeature{}, &Menu{}, &Feature{}, &Role{}, &FeAuthor{}, &FeRepoCate{}, &FeImage{}, &FeGist{}, &FeResource{}, &FeWiki{}, &FeRepo{}, &FeEcosystem{},
+	&User{}, &City{}, &Province{}, &Region{}, &Menu{}, &Feature{}, &Role{}, &FeAuthor{}, &FeRepoCate{}, &FeImage{}, &FeGist{}, &FeResource{}, &FeWiki{}, &FeRepo{}, &FeEcosystem{}, &FeFundamental{}, &FeLink{},
 }
 
 var newLogger = logger.New(

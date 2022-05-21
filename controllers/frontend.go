@@ -413,3 +413,77 @@ func GetEcosystems(c *gin.Context) {
 	}
 	RenderSuccess(c, ecosystems, "")
 }
+
+type addFundamentalReq struct {
+	Cate         string          `json:"cate" binding:"required"`
+	CateCn       string          `json:"cateCn"`
+	Topic        string          `json:"topic" binding:"required"`
+	TopicCn      string          `json:"topicCn"`
+	TopicDesc    string          `json:"topicDesc" binding:"required"`
+	TopticDescCn string          `json:"topicDescCn"`
+	Links        []models.FeLink `json:"links"`
+}
+
+func AddFundamental(c *gin.Context) {
+	var fund addFundamentalReq
+	if err := c.ShouldBindJSON(&fund); err != nil {
+		RenderError(c, err)
+		return
+	}
+	err := models.CreateFeFundamental(fund.Cate, fund.CateCn, fund.Topic, fund.TopicCn, fund.TopicDesc, fund.TopticDescCn, fund.Links)
+	if err != nil {
+		RenderError(c, err)
+		return
+	}
+	RenderSuccess(c, nil, "")
+}
+
+type FundRes struct {
+	List  []models.FeFundamental `json:"list"`
+	Total int64                  `json:"total"`
+}
+
+func GetFundamental(c *gin.Context) {
+	pageNumParam := c.DefaultQuery("pageNum", "1")
+	pageSizeParam := c.DefaultQuery("pageSize", "10")
+	pageNum, _ := common.ParseInt(pageNumParam)
+	pageSize, _ := common.ParseInt(pageSizeParam)
+	funds, err := models.AdminGetFundamentals(int(pageNum), int(pageSize))
+	if err != nil {
+		RenderError(c, err)
+		return
+	}
+	var total, _ = models.GetFundamentalCount()
+	var pageCount = float64(total) / float64(pageSize)
+	var res = FundRes{
+		List:  funds,
+		Total: common.Round(pageCount),
+	}
+	RenderSuccess(c, res, "")
+}
+
+type editFundamentalReq struct {
+	ID           int             `json:"id" binding:"required"`
+	Cate         string          `json:"cate" binding:"required"`
+	CateCn       string          `json:"cateCn"`
+	Topic        string          `json:"topic" binding:"required"`
+	TopicCn      string          `json:"topicCn"`
+	TopicDesc    string          `json:"topicDesc" binding:"required"`
+	TopticDescCn string          `json:"topicDescCn"`
+	Status       int             `json:"status"`
+	Links        []models.FeLink `json:"links"`
+}
+
+func EditFundamental(c *gin.Context) {
+	var fund editFundamentalReq
+	if err := c.ShouldBindJSON(&fund); err != nil {
+		RenderError(c, err)
+		return
+	}
+	err := models.UpdateFeFundamental(uint(fund.ID), uint(fund.Status), fund.Cate, fund.CateCn, fund.Topic, fund.TopicCn, fund.TopicDesc, fund.TopticDescCn, fund.Links)
+	if err != nil {
+		RenderError(c, err)
+		return
+	}
+	RenderSuccess(c, nil, "")
+}

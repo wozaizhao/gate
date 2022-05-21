@@ -53,28 +53,31 @@ func SetupRouter() *gin.Engine {
 	// 管理员才能访问 /admin
 	admin := r.Group("/admin", controllers.AdminAuth())
 	{
-		admin.GET("/users", controllers.AdminGetUsers)          // 获取所有用户
-		admin.PUT("/users/:id", controllers.AdminEditUser)      // 编辑用户状态、角色、积分等
-		admin.POST("/users/configRole", controllers.ConfigRole) // 配置用户角色
-		admin.POST("/roles", controllers.AddRole)               // 添加角色
-		admin.GET("/roles", controllers.GetRoles)               // 获取所有角色
-		admin.POST("/menus", controllers.AddMenu)               // 添加菜单
-		admin.POST("/features", controllers.AddFeature)         // 添加功能
+		admin.GET("/users", controllers.AdminGetUsers)     // 获取所有用户
+		admin.PUT("/users/:id", controllers.AdminEditUser) // 编辑用户状态、角色、积分等
+		// admin.POST("/users/configRole", controllers.ConfigRole) // 配置用户角色
+		admin.POST("/roles", controllers.AddRole)       // 添加角色
+		admin.GET("/roles", controllers.GetRoles)       // 获取所有角色
+		admin.POST("/menus", controllers.AddMenu)       // 添加菜单
+		admin.POST("/features", controllers.AddFeature) // 添加功能
 		// admin.PUT("/roles/:id", controllers.EditRole) // 编辑角色
-		admin.POST("/roles/configMenu", controllers.ConfigRoleMenu)       // 配置角色菜单
-		admin.POST("/roles/configFeature", controllers.ConfigRoleFeature) // 配置角色功能
-		admin.POST("/wikis", controllers.AddWiki)                         // 添加wiki
-		admin.POST("/gists", controllers.AddGist)                         // 添加gist
-		admin.POST("/cates", controllers.AddFeRepoCate)                   // 添加cate
-		admin.POST("/resources", controllers.AddResource)                 // 添加resource
-		admin.POST("/authors", controllers.AddAuthor)                     // 添加author
-		admin.POST("/navs", controllers.AddNav)                           // 添加nav
+		// admin.POST("/roles/configMenu", controllers.ConfigRoleMenu)       // 配置角色菜单
+		// admin.POST("/roles/configFeature", controllers.ConfigRoleFeature) // 配置角色功能
+		admin.POST("/wikis", controllers.AddWiki)         // 添加wiki
+		admin.POST("/gists", controllers.AddGist)         // 添加gist
+		admin.POST("/cates", controllers.AddFeRepoCate)   // 添加cate
+		admin.POST("/resources", controllers.AddResource) // 添加resource
+		admin.POST("/authors", controllers.AddAuthor)     // 添加author
+		admin.POST("/navs", controllers.AddNav)           // 添加nav
 		admin.GET("/repos", controllers.GetRepos)
 		admin.GET("/repos/:id", controllers.GetRepo)
 		admin.POST("/repos", controllers.AddRepo)           // 添加repo
 		admin.PUT("/repos/:id", controllers.EditRepo)       // 编辑repo
 		admin.DELETE("/repos/:id", controllers.DeleteRepo)  // 删除repo
 		admin.POST("/ecosystems", controllers.AddEcosystem) // 添加ecosystem
+		admin.POST("/fundamentals", controllers.AddFundamental)
+		admin.GET("/fundamentals", controllers.GetFundamental)
+		admin.PUT("/fundamentals", controllers.EditFundamental)
 	}
 
 	return r

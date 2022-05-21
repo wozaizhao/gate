@@ -8,9 +8,9 @@ import (
 
 // 新增角色
 type AddRoleReq struct {
-	RoleName string `json:"role_name" binding:"required"`
-	RoleKey  string `json:"role_key" binding:"required"`
-	RoleDesc string `json:"role_desc" binding:"required"`
+	RoleName string `json:"roleName" binding:"required"`
+	RoleKey  string `json:"roleKey" binding:"required"`
+	RoleDesc string `json:"roleDesc" binding:"required"`
 }
 
 func AddRole(c *gin.Context) {
@@ -99,86 +99,86 @@ func AddFeature(c *gin.Context) {
 }
 
 // 配置用户角色
-type ConfigRoleReq struct {
-	UserID  string `json:"user_id" binding:"required"`
-	RoleIDs []uint `json:"role_ids" binding:"required"`
-}
+// type ConfigRoleReq struct {
+// 	UserID  string `json:"user_id" binding:"required"`
+// 	RoleIDs []uint `json:"role_ids" binding:"required"`
+// }
 
-func ConfigRole(c *gin.Context) {
-	var req ConfigRoleReq
-	if err := c.ShouldBindJSON(&req); err != nil {
-		RenderBadRequest(c, err)
-		return
-	}
-	userID, _ := common.ParseInt(req.UserID)
-	err := models.ConfigUserRole(uint(userID), req.RoleIDs)
-	if err != nil {
-		RenderFail(c, err.Error())
-		return
-	}
-	RenderSuccess(c, nil, "配置成功")
-}
+// func ConfigRole(c *gin.Context) {
+// 	var req ConfigRoleReq
+// 	if err := c.ShouldBindJSON(&req); err != nil {
+// 		RenderBadRequest(c, err)
+// 		return
+// 	}
+// 	userID, _ := common.ParseInt(req.UserID)
+// 	err := models.ConfigUserRole(uint(userID), req.RoleIDs)
+// 	if err != nil {
+// 		RenderFail(c, err.Error())
+// 		return
+// 	}
+// 	RenderSuccess(c, nil, "配置成功")
+// }
 
 // 配置角色菜单
-type ConfigRoleMenuReq struct {
-	RoleID  string `json:"role_id" binding:"required"`
-	MenuIDs []uint `json:"menu_ids" binding:"required"`
-}
+// type ConfigRoleMenuReq struct {
+// 	RoleID  string `json:"role_id" binding:"required"`
+// 	MenuIDs []uint `json:"menu_ids" binding:"required"`
+// }
 
-func ConfigRoleMenu(c *gin.Context) {
-	var req ConfigRoleMenuReq
-	if err := c.ShouldBindJSON(&req); err != nil {
-		RenderBadRequest(c, err)
-		return
-	}
-	roleID, _ := common.ParseInt(req.RoleID)
-	err := models.ConfigRoleMenu(uint(roleID), req.MenuIDs)
-	if err != nil {
-		RenderFail(c, err.Error())
-		return
-	}
-	RenderSuccess(c, nil, "配置成功")
-}
+// func ConfigRoleMenu(c *gin.Context) {
+// 	var req ConfigRoleMenuReq
+// 	if err := c.ShouldBindJSON(&req); err != nil {
+// 		RenderBadRequest(c, err)
+// 		return
+// 	}
+// 	roleID, _ := common.ParseInt(req.RoleID)
+// 	err := models.ConfigRoleMenu(uint(roleID), req.MenuIDs)
+// 	if err != nil {
+// 		RenderFail(c, err.Error())
+// 		return
+// 	}
+// 	RenderSuccess(c, nil, "配置成功")
+// }
 
 // 配置角色功能
-type ConfigRoleFeatureReq struct {
-	RoleID     uint   `json:"role_id" binding:"required"`
-	FeatureIDs []uint `json:"feature_ids" binding:"required"`
-}
+// type ConfigRoleFeatureReq struct {
+// 	RoleID     uint   `json:"role_id" binding:"required"`
+// 	FeatureIDs []uint `json:"feature_ids" binding:"required"`
+// }
 
-func ConfigRoleFeature(c *gin.Context) {
-	var req ConfigRoleFeatureReq
-	if err := c.ShouldBindJSON(&req); err != nil {
-		RenderBadRequest(c, err)
-		return
-	}
-	err := models.ConfigRoleFeature(req.RoleID, req.FeatureIDs)
-	if err != nil {
-		RenderFail(c, err.Error())
-		return
-	}
-	RenderSuccess(c, nil, "配置成功")
-}
+// func ConfigRoleFeature(c *gin.Context) {
+// 	var req ConfigRoleFeatureReq
+// 	if err := c.ShouldBindJSON(&req); err != nil {
+// 		RenderBadRequest(c, err)
+// 		return
+// 	}
+// 	err := models.ConfigRoleFeature(req.RoleID, req.FeatureIDs)
+// 	if err != nil {
+// 		RenderFail(c, err.Error())
+// 		return
+// 	}
+// 	RenderSuccess(c, nil, "配置成功")
+// }
 
 // 查询用户角色 优先级低
 
 // 查询角色菜单
-type GetRoleMenuReq struct {
-	RoleID uint `json:"role_id" binding:"required"`
-}
+// type GetRoleMenuReq struct {
+// 	RoleID uint `json:"role_id" binding:"required"`
+// }
 
-func GetRoleMenu(c *gin.Context) {
-	var req GetRoleMenuReq
-	if err := c.ShouldBindJSON(&req); err != nil {
-		RenderBadRequest(c, err)
-		return
-	}
-	menus, err := models.GetRoleMenu(req.RoleID)
-	if err != nil {
-		RenderFail(c, err.Error())
-		return
-	}
-	RenderSuccess(c, menus, "查询成功")
-}
+// func GetRoleMenu(c *gin.Context) {
+// 	var req GetRoleMenuReq
+// 	if err := c.ShouldBindJSON(&req); err != nil {
+// 		RenderBadRequest(c, err)
+// 		return
+// 	}
+// 	menus, err := models.GetRoleMenu(req.RoleID)
+// 	if err != nil {
+// 		RenderFail(c, err.Error())
+// 		return
+// 	}
+// 	RenderSuccess(c, menus, "查询成功")
+// }
 
 // 查询角色功能
