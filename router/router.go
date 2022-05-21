@@ -71,13 +71,13 @@ func SetupRouter() *gin.Engine {
 		admin.POST("/navs", controllers.AddNav)           // 添加nav
 		admin.GET("/repos", controllers.GetRepos)
 		admin.GET("/repos/:id", controllers.GetRepo)
-		admin.POST("/repos", controllers.AddRepo)           // 添加repo
-		admin.PUT("/repos/:id", controllers.EditRepo)       // 编辑repo
-		admin.DELETE("/repos/:id", controllers.DeleteRepo)  // 删除repo
-		admin.POST("/ecosystems", controllers.AddEcosystem) // 添加ecosystem
-		admin.POST("/fundamentals", controllers.AddFundamental)
-		admin.GET("/fundamentals", controllers.GetFundamental)
-		admin.PUT("/fundamentals", controllers.EditFundamental)
+		admin.POST("/repos", controllers.AddRepo)               // 添加repo
+		admin.PUT("/repos/:id", controllers.EditRepo)           // 编辑repo
+		admin.DELETE("/repos/:id", controllers.DeleteRepo)      // 删除repo
+		admin.POST("/ecosystems", controllers.AddEcosystem)     // 添加ecosystem
+		admin.POST("/fundamentals", controllers.AddFundamental) // 添加Fundamental
+		admin.GET("/fundamentals", controllers.GetFundamental)  // 获取Fundamental
+		admin.PUT("/fundamentals", controllers.EditFundamental) // 修改Fundamental
 	}
 
 	return r
