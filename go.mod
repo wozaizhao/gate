@@ -12,6 +12,6 @@ require (
 	github.com/silenceper/wechat/v2 v2.1.0
 	github.com/sirupsen/logrus v1.8.1
 	gopkg.in/yaml.v2 v2.4.0
-	gorm.io/driver/mysql v1.2.2
-	gorm.io/gorm v1.22.4
+	gorm.io/driver/mysql v1.3.3
+	gorm.io/gorm v1.23.5
 )

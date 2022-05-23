@@ -19,7 +19,7 @@ type FeRepo struct {
 	Language        string         `json:"language" gorm:"type:varchar(20);NOT NULL;comment:语言"`
 	OwnerAvatarURL  string         `json:"ownerAvatarURL" gorm:"type:varchar(100);NOT NULL;comment:所有者头像"`
 	HomePage        string         `json:"homePage" gorm:"type:varchar(100);comment:主页"`
-	GithubURL       string         `json:"githubURL" gorm:"type:varchar(255);comment:Github网址"`
+	GithubURL       string         `json:"githubURL" gorm:"unique;type:varchar(255);comment:Github网址"`
 	License         string         `json:"license" gorm:"type:varchar(20);comment:许可证"`
 	Topics          string         `json:"topics" gorm:"type:varchar(500);comment:话题"`
 	LikeCount       uint           `json:"likeCount" gorm:"comment:点赞数"`

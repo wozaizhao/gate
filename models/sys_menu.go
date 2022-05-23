@@ -14,7 +14,7 @@ type Menu struct {
 	UpdatedAt    time.Time      `json:"updatedAt"`
 	DeletedAt    gorm.DeletedAt `json:"deletedAt" gorm:"index"`
 	MenuName     string         `json:"menu_name" gorm:"type:varchar(20);NOT NULL;comment:菜单名称"`
-	MenuKey      string         `json:"menu_key" gorm:"type:varchar(20);NOT NULL;comment:菜单标识"`
+	MenuKey      string         `json:"menu_key" gorm:"unique;type:varchar(20);NOT NULL;comment:菜单标识"`
 	MenuDesc     string         `json:"menu_desc" gorm:"type:varchar(50);NOT NULL;comment:菜单描述"`
 	MenuParentID uint           `json:"menu_parent_id" gorm:"type:int(11);NOT NULL;DEFAULT '0':comment:父级菜单ID"`
 	Status       uint           `json:"status" gorm:"type:tinyint(1);NOT NULL;DEFAULT '0';comment:状态"`

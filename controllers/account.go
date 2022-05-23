@@ -147,6 +147,32 @@ func UpdateUser(c *gin.Context) {
 
 }
 
+type adminUpdateUserReq struct {
+	ID        int    `json:"id" binding:"required"`
+	Nickname  string `json:"nickname" binding:"required"`
+	UserName  string `json:"username"`
+	AvatarURL string `json:"avatarUrl"`
+	Bio       string `json:"bio"`
+	Gender    int    `json:"gender"`
+	Status    int    `json:"status"`
+	Roles     []int  `json:"roles"`
+}
+
+func AdminEditUser(c *gin.Context) {
+	var s adminUpdateUserReq
+	if err := c.ShouldBindJSON(&s); err != nil {
+		RenderBadRequest(c, err)
+		return
+	}
+	res, err := models.EditUser(uint(s.ID), s.Nickname, s.UserName, s.AvatarURL, s.Bio, s.Gender, s.Status, s.Roles)
+	if err != nil {
+		RenderError(c, err)
+		return
+	}
+	RenderSuccess(c, res, "修改成功")
+
+}
+
 type UserData struct {
 	ID        uint      `json:"id"`
 	Nickname  string    `json:"nickname"`
@@ -211,5 +237,3 @@ func AdminGetUsers(c *gin.Context) {
 	}
 	RenderSuccess(c, res, "")
 }
-
-func AdminEditUser(c *gin.Context) {}

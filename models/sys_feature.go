@@ -14,7 +14,7 @@ type Feature struct {
 	UpdatedAt       time.Time      `json:"updatedAt"`
 	DeletedAt       gorm.DeletedAt `json:"deletedAt" gorm:"index"`
 	FeatureName     string         `json:"feature_name" gorm:"type:varchar(20);NOT NULL;comment:功能名称"`
-	FeatureKey      string         `json:"feature_key" gorm:"type:varchar(20);NOT NULL;comment:功能标识"`
+	FeatureKey      string         `json:"feature_key" gorm:"unique;type:varchar(20);NOT NULL;comment:功能标识"`
 	FeatureDesc     string         `json:"feature_desc" gorm:"type:varchar(50);NOT NULL;comment:功能描述"`
 	FeatureParentID uint           `json:"feature_parent_id" gorm:"type:int(11);NOT NULL;DEFAULT '0';comment:父级功能ID"`
 	Status          uint           `json:"status" gorm:"type:tinyint(1);NOT NULL;DEFAULT '0';comment:状态"`

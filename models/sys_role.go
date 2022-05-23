@@ -14,7 +14,7 @@ type Role struct {
 	UpdatedAt time.Time      `json:"updatedAt"`
 	DeletedAt gorm.DeletedAt `json:"deletedAt" gorm:"index"`
 	RoleName  string         `json:"roleName" gorm:"type:varchar(20);NOT NULL;comment:角色名称"`
-	RoleKey   string         `json:"roleKey" gorm:"type:varchar(20);NOT NULL;comment:角色标识"`
+	RoleKey   string         `json:"roleKey" gorm:"type:varchar(20);unique;NOT NULL;comment:角色标识"`
 	RoleDesc  string         `json:"roleDesc" gorm:"type:varchar(50);NOT NULL;comment:角色描述"`
 	Menus     []Menu         `json:"menus" gorm:"many2many:role_menu;"`
 	Features  []Feature      `json:"features" gorm:"many2many:role_feature;"`

@@ -14,9 +14,9 @@ func main() {
 	r.SetTrustedProxies([]string{"0.0.0.0/0", "127.0.0.1"})
 	cfg := config.GetConfig()
 
-	// if cfg.Mode == "production" {
-	common.LogToFile()
-	// }
+	if cfg.Mode == "production" {
+		common.LogToFile()
+	}
 
 	middlewares.InitWechat()
 	// middlewares.InitSmsClient()

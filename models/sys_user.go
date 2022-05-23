@@ -18,7 +18,7 @@ type User struct {
 	Bio       string         `json:"bio" gorm:"type:varchar(50);DEFAULT '';comment:简介"`
 	AvatarURL string         `json:"avatarUrl" gorm:"type:varchar(255);DEFAULT '';comment:头像"`
 	Gender    int            `json:"gender" gorm:"type:tinyint(1);DEFAULT '0';comment:性别"`
-	Username  string         `json:"username" gorm:"type:varchar(30);DEFAULT '';comment:用户名"`
+	Username  string         `json:"username" gorm:"unique;type:varchar(30);DEFAULT '';comment:用户名"`
 	Password  string         `json:"password" gorm:"type:varchar(64);DEFAULT '';comment:密码"`
 	OpenID    string         `json:"open_id" gorm:"unique;type:varchar(40);DEFAULT ''"`
 	Roles     []Role         `json:"roles" gorm:"many2many:user_role;"`
@@ -108,6 +108,40 @@ func UpdateUser(userID uint, gender int, nickname, avatarURL, bio string) (res b
 	user.ID = userID
 	r := DB.Model(&user).Updates(User{Gender: gender, Nickname: nickname, AvatarURL: avatarURL, Bio: bio})
 	return r.RowsAffected > 0, r.Error
+}
+
+func EditUser(userID uint, nickname, username, avatarURL, bio string, gender, status int, roleIDs []int) (res bool, err error) {
+	var user User
+	user.ID = userID
+	var roles []Role
+	var r *gorm.DB
+	txErr := DB.Transaction(func(tx *gorm.DB) error {
+		err := tx.Preload("Roles").First(&user).Error
+		if err != nil {
+			return err
+		}
+		user.Nickname = nickname
+		user.Username = username
+		user.AvatarURL = avatarURL
+		user.Bio = bio
+		user.Gender = gender
+		user.Status = uint(status)
+		err = tx.Model(&user).Association("Roles").Delete(user.Roles)
+		if err != nil {
+			return err
+		}
+		err = tx.Find(&roles, roleIDs).Error
+		if err != nil {
+			return err
+		}
+		user.Roles = roles
+		r = tx.Session(&gorm.Session{FullSaveAssociations: true}).Save(&user)
+		if r.Error != nil {
+			return err
+		}
+		return nil
+	})
+	return r.RowsAffected > 0, txErr
 }
 
 // 设置用户状态
