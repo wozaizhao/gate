@@ -59,8 +59,10 @@ func SetupRouter() *gin.Engine {
 		admin.POST("/roles", controllers.AddRole)       // 添加角色
 		admin.GET("/roles", controllers.GetRoles)       // 获取所有角色
 		admin.POST("/menus", controllers.AddMenu)       // 添加菜单
+		admin.GET("/menus", controllers.GetMenus)       // 获取所有菜单
 		admin.POST("/features", controllers.AddFeature) // 添加功能
 		// admin.PUT("/roles/:id", controllers.EditRole) // 编辑角色
+		admin.POST("/roles/configPermission", controllers.ConfigRolePermission) // 配置角色权限
 		// admin.POST("/roles/configMenu", controllers.ConfigRoleMenu)       // 配置角色菜单
 		// admin.POST("/roles/configFeature", controllers.ConfigRoleFeature) // 配置角色功能
 		admin.POST("/wikis", controllers.AddWiki)         // 添加wiki
@@ -78,6 +80,8 @@ func SetupRouter() *gin.Engine {
 		admin.POST("/fundamentals", controllers.AddFundamental) // 添加Fundamental
 		admin.GET("/fundamentals", controllers.GetFundamental)  // 获取Fundamental
 		admin.PUT("/fundamentals", controllers.EditFundamental) // 修改Fundamental
+		admin.POST("/permissions", controllers.AddPermission)   // 添加Permission
+		admin.GET("/permissions", controllers.GetPermissions)   // 获取Permission
 	}
 
 	return r

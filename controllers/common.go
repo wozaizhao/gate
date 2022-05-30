@@ -26,3 +26,10 @@ func RenderFail(c *gin.Context, message string) {
 func RenderSuccess(c *gin.Context, data interface{}, message string) {
 	c.JSON(http.StatusOK, gin.H{"status": "success", "data": data, "message": message})
 }
+
+func GetTotal(Total, pageSize int64) int64 {
+	if Total%pageSize == 0 {
+		return Total / pageSize
+	}
+	return Total/pageSize + 1
+}

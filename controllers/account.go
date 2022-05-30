@@ -36,13 +36,14 @@ func Login(c *gin.Context) {
 		RenderError(c, errorGenerateToken)
 		return
 	}
-	// roles, err := models.GetUserRole(user.ID)
-	// if err != nil {
-	// 	RenderError(c, err)
-	// 	return
-	// }
+	permissions, err := models.GetUserPermissions(user.ID)
+	if err != nil {
+		RenderError(c, err)
+		return
+	}
 	var res loginRes
 	res.Token = token
+	res.Permissions = permissions
 	res.User = user
 	// res.User = basicUserInfo(user, roles)
 
@@ -54,8 +55,9 @@ func Login(c *gin.Context) {
 }
 
 type loginRes struct {
-	User  models.User `json:"user"`
-	Token string      `json:"token"`
+	User        models.User         `json:"user"`
+	Permissions []models.Permission `json:"permissions"`
+	Token       string              `json:"token"`
 }
 
 type UserInfo struct {
@@ -93,13 +95,14 @@ func LoginByOpenID(c *gin.Context) {
 		RenderError(c, errorGenerateToken)
 		return
 	}
-	// roles, err := models.GetUserRole(user.ID)
-	// if err != nil {
-	// 	RenderError(c, err)
-	// 	return
-	// }
+	permissions, err := models.GetUserPermissions(user.ID)
+	if err != nil {
+		RenderError(c, err)
+		return
+	}
 	var res loginRes
 	res.Token = token
+	res.Permissions = permissions
 	res.User = user
 	// res.User = basicUserInfo(user, roles)
 
@@ -117,7 +120,13 @@ func CurrentUser(c *gin.Context) {
 		RenderError(c, err)
 		return
 	}
+	permissions, err := models.GetUserPermissions(user.ID)
+	if err != nil {
+		RenderError(c, err)
+		return
+	}
 	var res loginRes
+	res.Permissions = permissions
 	res.User = user
 	// res.User = UserInfo{ID: user.ID, Nickname: user.Nickname, Bio: user.Bio, AvatarURL: user.AvatarURL, Gender: user.Gender, Status: user.Status}
 

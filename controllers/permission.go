@@ -44,20 +44,25 @@ func GetRoles(c *gin.Context) {
 		return
 	}
 	var total = models.GetUserCount()
-	var pageCount = float64(total) / float64(pageSize)
 	rolesRes := rolesRes{
 		List:  roles,
-		Total: int64(pageCount),
+		Total: GetTotal(int64(total), int64(pageSize)),
 	}
 	RenderSuccess(c, rolesRes, "查询成功")
 }
 
 // 新增菜单
 type AddMenuReq struct {
-	MenuName     string `json:"menu_name" binding:"required"`
-	MenuKey      string `json:"menu_key" binding:"required"`
-	MenuDesc     string `json:"menu_desc" binding:"required"`
-	MenuParentID string `json:"menu_parent_id" binding:"required"`
+	Name        string `json:"name" binding:"required"`
+	Path        string `json:"path" binding:"required"`
+	Redirect    string `json:"redirect"`
+	Title       string `json:"title" binding:"required"`
+	Icon        string `json:"icon"`
+	Component   string `json:"component"`
+	Permissions string `json:"permissions"`
+	ExternalURL string `json:"externalURL"`
+	Sort        int    `json:"sort"`
+	ParentID    int    `json:"parentId"`
 }
 
 func AddMenu(c *gin.Context) {
@@ -66,13 +71,93 @@ func AddMenu(c *gin.Context) {
 		RenderBadRequest(c, err)
 		return
 	}
-	parentID, _ := common.ParseInt(req.MenuParentID)
-	menu, err := models.CreateMenu(req.MenuName, req.MenuKey, req.MenuDesc, uint(parentID))
+	menu, err := models.CreateMenu(req.Name, req.Path, req.Redirect, req.Title, req.Icon, req.Component, req.Permissions, req.ExternalURL, req.Sort, uint(req.ParentID))
 	if err != nil {
 		RenderFail(c, err.Error())
 		return
 	}
 	RenderSuccess(c, menu, "添加成功")
+}
+
+func GetMenus(c *gin.Context) {
+	menus, err := models.GetMenus()
+	if err != nil {
+		RenderFail(c, err.Error())
+		return
+	}
+	RenderSuccess(c, gin.H{"list": menus}, "查询成功")
+}
+
+type addPermissionReq struct {
+	Label    string `json:"label" binding:"required"`
+	Value    string `json:"value" binding:"required"`
+	ParentID int    `json:"parentId"`
+}
+
+func AddPermission(c *gin.Context) {
+	var req addPermissionReq
+	if err := c.ShouldBindJSON(&req); err != nil {
+		RenderBadRequest(c, err)
+		return
+	}
+	err := models.CreatePermission(req.Label, req.Value, uint(req.ParentID))
+	if err != nil {
+		RenderFail(c, err.Error())
+		return
+	}
+	RenderSuccess(c, nil, "添加成功")
+}
+
+type permissionNode struct {
+	ID       uint              `json:"id"`
+	Label    string            `json:"label"`
+	Value    string            `json:"value"`
+	Children []*permissionNode `json:"children"`
+}
+
+func GetPermissions(c *gin.Context) {
+	firstClasses, err := models.GetFirstClassPermission()
+	if err != nil {
+		RenderFail(c, err.Error())
+		return
+	}
+	all, err := models.GetPermissions()
+	if err != nil {
+		RenderFail(c, err.Error())
+		return
+	}
+	tree := make([]*permissionNode, 0)
+
+	for _, firstClass := range firstClasses {
+		node := &permissionNode{
+			ID:       firstClass.ID,
+			Label:    firstClass.Label,
+			Value:    firstClass.Value,
+			Children: make([]*permissionNode, 0),
+		}
+		firstChildren := make([]*permissionNode, 0)
+		for _, permission := range all {
+			if permission.ParentID == firstClass.ID {
+				var child = &permissionNode{
+					ID:       permission.ID,
+					Label:    permission.Label,
+					Value:    permission.Value,
+					Children: make([]*permissionNode, 0),
+				}
+				firstChildren = append(firstChildren, child)
+			}
+		}
+		if len(firstChildren) > 0 {
+			node.Children = firstChildren
+		}
+		tree = append(tree, node)
+	}
+	// permissions, err := models.GetPermissions()
+	// if err != nil {
+	// 	RenderFail(c, err.Error())
+	// 	return
+	// }
+	RenderSuccess(c, tree, "")
 }
 
 // 新增功能
@@ -96,6 +181,25 @@ func AddFeature(c *gin.Context) {
 		return
 	}
 	RenderSuccess(c, menu, "添加成功")
+}
+
+type configPermissionReq struct {
+	RoleID        int    `json:"roleID" binding:"required"`
+	PermissionIDs []uint `json:"permissionIDs" binding:"required"`
+}
+
+func ConfigRolePermission(c *gin.Context) {
+	var req configPermissionReq
+	if err := c.ShouldBindJSON(&req); err != nil {
+		RenderBadRequest(c, err)
+		return
+	}
+	err := models.ConfigRolePermission(uint(req.RoleID), req.PermissionIDs)
+	if err != nil {
+		RenderFail(c, err.Error())
+		return
+	}
+	RenderSuccess(c, nil, "配置成功")
 }
 
 // 配置用户角色
