@@ -443,21 +443,35 @@ type FundRes struct {
 	Total int64                  `json:"total"`
 }
 
-func GetFundamental(c *gin.Context) {
+func AdminGetFundamental(c *gin.Context) {
+	getFundamental(c, "admin")
+}
+
+func UserGetFundamental(c *gin.Context) {
+	getFundamental(c, "user")
+}
+
+func getFundamental(c *gin.Context, role string) {
 	pageNumParam := c.DefaultQuery("pageNum", "1")
 	pageSizeParam := c.DefaultQuery("pageSize", "10")
 	pageNum, _ := common.ParseInt(pageNumParam)
 	pageSize, _ := common.ParseInt(pageSizeParam)
-	funds, err := models.AdminGetFundamentals(int(pageNum), int(pageSize))
+	var funds []models.FeFundamental
+	var err error
+	if role == "admin" {
+		funds, err = models.AdminGetFundamentals(int(pageNum), int(pageSize))
+
+	} else {
+		funds, err = models.GetFeFundamentals(int(pageNum), int(pageSize))
+	}
 	if err != nil {
 		RenderError(c, err)
 		return
 	}
 	var total, _ = models.GetFundamentalCount()
-	var pageCount = float64(total) / float64(pageSize)
 	var res = FundRes{
 		List:  funds,
-		Total: common.Round(pageCount),
+		Total: GetTotal(int64(total), int64(pageSize)),
 	}
 	RenderSuccess(c, res, "")
 }

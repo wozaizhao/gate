@@ -145,14 +145,12 @@ func EditUser(userID uint, nickname, username, avatarURL, bio string, gender, st
 }
 
 func GetUserPermissions(userID uint) (permissions []Permission, err error) {
-	common.LogDebug("GetUserPermissions", userID)
 	var user User
 	user.ID = userID
 	err = DB.Preload("Roles").First(&user).Error
 	if err != nil {
 		return nil, err
 	}
-	common.LogDebug("GetUserPermissions", user.Roles)
 	permissions, err = GetRolesPermissions(user.Roles)
 	return permissions, err
 }

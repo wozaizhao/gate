@@ -28,9 +28,9 @@ func CreateFeFundamental(cate, cateCn, topic, topicCn, topicDesc, topticDescCn s
 	return DB.Create(&fund).Error
 }
 
-func GetFeFundamentals() ([]FeFundamental, error) {
+func GetFeFundamentals(pageNum, pageSize int) ([]FeFundamental, error) {
 	var fund []FeFundamental
-	err := DB.Find(&fund).Error
+	err := DB.Scopes(Paginate(pageNum, pageSize)).Preload("Links").Find(&fund).Error
 	return fund, err
 }
 

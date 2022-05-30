@@ -37,17 +37,19 @@ func SetupRouter() *gin.Engine {
 	// 注册用户可以访问 /user
 	user := r.Group("/user", controllers.UserAuth())
 	{
-		user.GET("/currentUser", controllers.CurrentUser)  // 当前帐户
-		user.PUT("/edit", controllers.UpdateUser)          // 设置用户昵称、头像、性别、用户名、密码
-		user.POST("/upload", controllers.Upload)           // 上传
-		user.GET("/wikis", controllers.GetWikis)           // 获取wikis
-		user.GET("/gists", controllers.GetGists)           // 获取gists
-		user.GET("/cates", controllers.GetFeCates)         // 获取cates
-		user.GET("/resources", controllers.GetResources)   // 获取resources
-		user.GET("/authors", controllers.GetAuthors)       // 获取author
-		user.GET("/author/:id", controllers.GetAuthor)     // 获取author
-		user.GET("/navs", controllers.GetNavs)             // 获取navs
-		user.GET("/ecosystems", controllers.GetEcosystems) // 获取ecosystem
+		user.GET("/currentUser", controllers.CurrentUser)         // 当前帐户
+		user.PUT("/edit", controllers.UpdateUser)                 // 设置用户昵称、头像、性别、用户名、密码
+		user.POST("/upload", controllers.Upload)                  // 上传
+		user.GET("/wikis", controllers.GetWikis)                  // 获取wikis
+		user.GET("/gists", controllers.GetGists)                  // 获取gists
+		user.GET("/cates", controllers.GetFeCates)                // 获取cates
+		user.GET("/resources", controllers.GetResources)          // 获取resources
+		user.GET("/authors", controllers.GetAuthors)              // 获取author
+		user.GET("/author/:id", controllers.GetAuthor)            // 获取author
+		user.GET("/navs", controllers.GetNavs)                    // 获取navs
+		user.GET("/ecosystems", controllers.GetEcosystems)        // 获取ecosystem
+		user.GET("/fundamentals", controllers.UserGetFundamental) // 获取Fundamental
+
 	}
 
 	// 管理员才能访问 /admin
@@ -73,15 +75,15 @@ func SetupRouter() *gin.Engine {
 		admin.POST("/navs", controllers.AddNav)           // 添加nav
 		admin.GET("/repos", controllers.GetRepos)
 		admin.GET("/repos/:id", controllers.GetRepo)
-		admin.POST("/repos", controllers.AddRepo)               // 添加repo
-		admin.PUT("/repos/:id", controllers.EditRepo)           // 编辑repo
-		admin.DELETE("/repos/:id", controllers.DeleteRepo)      // 删除repo
-		admin.POST("/ecosystems", controllers.AddEcosystem)     // 添加ecosystem
-		admin.POST("/fundamentals", controllers.AddFundamental) // 添加Fundamental
-		admin.GET("/fundamentals", controllers.GetFundamental)  // 获取Fundamental
-		admin.PUT("/fundamentals", controllers.EditFundamental) // 修改Fundamental
-		admin.POST("/permissions", controllers.AddPermission)   // 添加Permission
-		admin.GET("/permissions", controllers.GetPermissions)   // 获取Permission
+		admin.POST("/repos", controllers.AddRepo)                   // 添加repo
+		admin.PUT("/repos/:id", controllers.EditRepo)               // 编辑repo
+		admin.DELETE("/repos/:id", controllers.DeleteRepo)          // 删除repo
+		admin.POST("/ecosystems", controllers.AddEcosystem)         // 添加ecosystem
+		admin.POST("/fundamentals", controllers.AddFundamental)     // 添加Fundamental
+		admin.GET("/fundamentals", controllers.AdminGetFundamental) // 获取Fundamental
+		admin.PUT("/fundamentals", controllers.EditFundamental)     // 修改Fundamental
+		admin.POST("/permissions", controllers.AddPermission)       // 添加Permission
+		admin.GET("/permissions", controllers.GetPermissions)       // 获取Permission
 	}
 
 	return r

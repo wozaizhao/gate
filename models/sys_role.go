@@ -74,13 +74,10 @@ func GetRolesPermissions(roles []Role) (permissions []Permission, err error) {
 	if err != nil {
 		return nil, err
 	}
-	common.LogDebug("roles", roles)
 	for _, role := range roles {
 		permissions = append(permissions, role.Permissions...)
 	}
-	common.LogDebug("permissions", permissions)
 	permissions = uniquePermissions(permissions)
-	common.LogDebug("permissions", permissions)
 	return permissions, nil
 }
 
