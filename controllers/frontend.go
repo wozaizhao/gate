@@ -279,22 +279,35 @@ type RepoRes struct {
 	Total int64           `json:"total"`
 }
 
-func GetRepos(c *gin.Context) {
+func AdminGetRepos(c *gin.Context) {
+	getRepos(c, "admin")
+}
+
+func UserGetRepos(c *gin.Context) {
+	getRepos(c, "user")
+}
+
+func getRepos(c *gin.Context, role string) {
 	pageNumParam := c.DefaultQuery("pageNum", "1")
 	pageSizeParam := c.DefaultQuery("pageSize", "10")
 	name := c.DefaultQuery("name", "")
 	pageNum, _ := common.ParseInt(pageNumParam)
 	pageSize, _ := common.ParseInt(pageSizeParam)
-	repos, err := models.AdminGetRepos(int(pageNum), int(pageSize), name)
+	var repos []models.FeRepo
+	var err error
+	if role == "admin" {
+		repos, err = models.AdminGetRepos(int(pageNum), int(pageSize), name)
+	} else {
+		repos, err = models.GetRepos(int(pageNum), int(pageSize), name)
+	}
 	if err != nil {
 		RenderError(c, err)
 		return
 	}
 	var total = models.GetRepoCount(name)
-	var pageCount = float64(total) / float64(pageSize)
 	var res = RepoRes{
 		List:  repos,
-		Total: common.Round(pageCount),
+		Total: GetTotal(int64(total), int64(pageSize)),
 	}
 	RenderSuccess(c, res, "")
 }

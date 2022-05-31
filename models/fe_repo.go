@@ -48,9 +48,9 @@ func IsRepoExist(ownerName, repoName string) bool {
 	return repo.ID > 0
 }
 
-func GetRepos(pageNum, pageSize int) ([]FeRepo, error) {
+func GetRepos(pageNum, pageSize int, name string) ([]FeRepo, error) {
 	var repos []FeRepo
-	err := DB.Scopes(Paginate(pageNum, pageSize), FieldEqual("status", common.STATUS_NORMAL)).Order("github_like_count desc").Find(&repos).Error
+	err := DB.Scopes(Paginate(pageNum, pageSize), FieldEqual("status", common.STATUS_NORMAL)).Where("repo_name LIKE ?", name+"%").Order("github_like_count desc").Find(&repos).Error
 	return repos, err
 }
 

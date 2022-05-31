@@ -239,10 +239,9 @@ func AdminGetUsers(c *gin.Context) {
 	// }
 
 	var total = models.GetUserCount()
-	var pageCount = float64(total) / float64(pageSize)
 	var res = usersRes{
 		List:  users,
-		Total: common.Round(pageCount),
+		Total: GetTotal(int64(total), int64(pageSize)),
 	}
 	RenderSuccess(c, res, "")
 }

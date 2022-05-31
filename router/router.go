@@ -49,6 +49,7 @@ func SetupRouter() *gin.Engine {
 		user.GET("/navs", controllers.GetNavs)                    // 获取navs
 		user.GET("/ecosystems", controllers.GetEcosystems)        // 获取ecosystem
 		user.GET("/fundamentals", controllers.UserGetFundamental) // 获取Fundamental
+		user.GET("/repos", controllers.UserGetRepos)
 
 	}
 
@@ -73,7 +74,7 @@ func SetupRouter() *gin.Engine {
 		admin.POST("/resources", controllers.AddResource) // 添加resource
 		admin.POST("/authors", controllers.AddAuthor)     // 添加author
 		admin.POST("/navs", controllers.AddNav)           // 添加nav
-		admin.GET("/repos", controllers.GetRepos)
+		admin.GET("/repos", controllers.AdminGetRepos)
 		admin.GET("/repos/:id", controllers.GetRepo)
 		admin.POST("/repos", controllers.AddRepo)                   // 添加repo
 		admin.PUT("/repos/:id", controllers.EditRepo)               // 编辑repo
