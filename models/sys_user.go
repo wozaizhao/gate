@@ -18,7 +18,7 @@ type User struct {
 	Bio       string         `json:"bio" gorm:"type:varchar(50);DEFAULT '';comment:简介"`
 	AvatarURL string         `json:"avatarUrl" gorm:"type:varchar(255);DEFAULT '';comment:头像"`
 	Gender    int            `json:"gender" gorm:"type:tinyint(1);DEFAULT '0';comment:性别"`
-	Username  string         `json:"username" gorm:"unique;type:varchar(30);DEFAULT '';comment:用户名"`
+	Username  string         `json:"username" gorm:"type:varchar(30);DEFAULT '';comment:用户名"`
 	Password  string         `json:"password" gorm:"type:varchar(64);DEFAULT '';comment:密码"`
 	OpenID    string         `json:"open_id" gorm:"unique;type:varchar(40);DEFAULT ''"`
 	Roles     []Role         `json:"roles" gorm:"many2many:user_role;"`
